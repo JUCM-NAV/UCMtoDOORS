@@ -1,0 +1,461 @@
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - Based on initial version by Bo Jiang
+// - provides services for initialization and exit of applications
+*/
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - checks if the UCM folder exists, and creates the folder if it does not exist
+// - returns true if folder was found or created successfully, false if it still does not exist
+*/
+bool checkCreateUCMFolder( string name, string description ) {
+	bool createOK = false
+
+	if( folder( name ) )   
+		UCMFolder = folder( name )
+	else
+		UCMFolder = create( name, description )
+	if( folder( name ) )
+		createOK = true
+	return createOK
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - opens external module for reading and external link module for editing
+// - assumptions for this function
+//	- current folder is the UCM folder
+//	- external modules reside in the parent folder of UCM folder
+// - returns true if successful, otherwise returns false
+*/
+bool openExternalModules() {
+	Module currentModule
+	bool formalOK = false, linkOK = false
+
+	externalLinkModule = edit( fileNameLinkUCMExt, false )
+	externalModule = read( fileNameExternal, false )
+	closeFolder()
+	for currentModule in current Folder do {
+		if( isEdit( currentModule ) ) {
+			if( "../" currentModule."Name" "" == fileNameLinkUCMExt )
+				linkOK = true
+		}
+		if( isRead( currentModule ) ) {
+			if( "../" currentModule."Name" "" == fileNameExternal )
+				formalOK = true
+		}
+	}
+	current = UCMFolder
+	return ( formalOK && linkOK )
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - checks whether the external attribute exists for the external link module
+// - assumptions for this function
+//	- external link module exists
+// - returns true if the attribute exists, otherwise returns false
+*/
+bool checkExternalAttribute() {
+	current = externalLinkModule
+	return ( exists attribute attributeExternalLink )
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - saves and closes all open modules in a folder
+// - returns false if a module remains open, true if all modules are closed
+*/
+bool saveCloseAllModules( Folder theFolder ) {
+	Module currentModule
+	bool allClosed = true
+
+	// loops through all OPEN modules in a folder
+	for currentModule in theFolder do {
+		save currentModule
+		close( currentModule, true )
+	}
+	for currentModule in theFolder do {
+		allClosed = false
+		break
+	}
+	return allClosed
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - checks whether one of the UCM modules has been deleted
+// - returns true if modules are not deleted, false if one of the modules is deleted
+*/
+bool checkDeletedUCMModules() {
+	bool checkOK = true
+
+	if ( exists module fileNameDevices ) {
+		checkOK = !( isDeleted item( fileNameDevices ) )
+		if( checkOK ) {
+			if ( exists module fileNameResponsibilities ) {
+				checkOK = !( isDeleted item( fileNameResponsibilities ) )
+				if( checkOK ) {
+					if ( exists module fileNameComponents ) {
+						checkOK = !( isDeleted item( fileNameComponents ) )
+						if( checkOK ) {
+							if ( exists module fileNameMaps ) {
+								checkOK = !( isDeleted item( fileNameMaps ) )
+								if( checkOK ) {
+									if ( exists module fileNameScenarios )
+										checkOK = !( isDeleted item( fileNameScenarios ) )
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return checkOK
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - removes module
+// - returns true if module was removed, false if it still exists
+*/
+bool removeModule( string name ) {
+	bool removeOK = true
+
+	if( exists module name ) {
+		delete item name
+		purge item name
+	}
+	if( exists module name )
+		removeOK = false
+	return removeOK
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - removes all UCM link modules
+// - returns true if modules were removed, false if one of the modules still exists
+*/
+bool removeUCMLinkModules() {
+	bool removeOK = true
+
+	removeOK = removeModule( fileNameLinkDevComp )
+	if( removeOK ) {
+		removeOK = removeModule( fileNameLinkDevResp )
+		if( removeOK ) {
+			removeOK = removeModule( fileNameLinkRefDef )
+			if( removeOK ) {
+				removeOK = removeModule( fileNameLinkMapElem )
+				if( removeOK ) {
+					removeOK = removeModule( fileNameLinkMapComp )
+					if( removeOK )
+						removeOK = removeModule( fileNameLinkMapScen )
+				}
+			}
+		}
+	}
+	return removeOK
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - checks if module exists
+//	- if yes all objects of the module are set to deleted and to old
+//	- if no the module is created, views and linksets are also created at this time
+// - the following modules are created with this function
+//	- Devices, Components, Responsibilities, Maps, Scenarios
+// - assumptions for this function
+//	- if it is okay to do auto-completion of links, then externalLinkModule has been defined
+// - returns true if module was found or created successfully, false if it still does not exist
+*/
+bool checkCreateUCMModule( string theName ) {
+	Link l
+	bool createOK = false, b
+ 
+	if( exists module theName ) {
+		currentModule = edit( theName, false )
+		for currentObject in currentModule do {
+			currentObject."Deleted" = true
+			currentObject."New" = false
+		}
+		save currentModule
+		close( currentModule, false )
+	}
+	else {
+		// last parameter needs to be true because otherwise views cannot be created
+		currentModule = create( theName, theName, "0", 1, true)
+		current = currentModule
+		if( theName == fileNameDevices ) {
+			create object type "String" (default "No content") attribute "ID" 
+			create object type "String" (default "") attribute "Name_"          
+			create object type "String" (default "") attribute "Description_"       
+			create object type "String" (default "No content") attribute "Speed Factor" 
+			// internal attributes
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "New"
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
+			createDeviceViews()
+		}
+		if( theName == fileNameComponents ) {
+			create object type "String" (default "No content") attribute "ID" 
+			create object type "String" (default "No content") attribute "Name_"                  
+			create object type "String" (default "") attribute "Description_"
+			create object type "String" date false  history false changeBars false (default "No content") attribute "Type"
+			create object type "String" (default "") attribute "Device ID"        
+			// internal attributes
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "New"
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
+			createComponentViews()
+		}
+		if( theName == fileNameResponsibilities ) {
+			create object type "String" (default "No content") attribute "ID" 
+			create object type "String" (default "No content") attribute "Name_"          
+			create object type "String" (default "") attribute "Description_"        
+			create object type "String" (default "No content") attribute "Processor Demand" 
+			// internal attributes
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "New" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
+			createResponsibilityViews()
+		}
+		if( theName == fileNameMaps ) {
+			// for all
+			create object type "String" (default "No content") attribute "ID" 
+			create object type "String" (default "") attribute "Name_"             
+			create object type "String" (default "") attribute "Description_"       
+			create object type "String" (default "No content") attribute "Type"
+			// only used for respRef, compRef, and stub
+			create object type "Integer" date false history false changeBars false (default "0") attribute "Fx" 
+			create object type "Integer" date false history false changeBars false (default "0") attribute "Fy"
+			// only used for respRef and compRef
+			create object type "String" (default "No content") attribute "Definition ID" 
+			// only used for map
+			create object type "String" (default "") attribute "Map Title"
+			create object type "String" date false history false changeBars false (default "No content") attribute "Map File Name" 
+			// only used for respRef
+			create object type "String" (default "") attribute "Enclosing Component"             
+			// only used for compRef
+			create object type "Integer" date false history false changeBars false (default "0") attribute "Width" 
+			create object type "Integer" date false history false changeBars false (default "0") attribute "Height" 
+			create object type "String" (default "") attribute "Component Role" 
+			create object type "String" (default "") attribute "Parent Component"       
+			create object type "String" (default "no") attribute "Anchored" 
+			// only used for stub
+			create object type "String" date false history false changeBars false (default "No content") attribute "Stub Type" 
+			create object type "String" (default "") attribute "Plugins" 
+			// internal attributes
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links"
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "New" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
+			createMapViews()
+		}
+		if( theName == fileNameScenarios ) {
+			// for all
+			create object type "String" (default "No content") attribute "ID"
+			// only used for scenarioGroup, scenario, and doElement
+			create object type "String" (default "No content") attribute "Name_"                  
+			create object type "String" (default "") attribute "Description_"
+			// for all
+			create object type "String" (default "No content") attribute "Type"
+			// only used for doElement
+			create object type "String" (default "No content") attribute "Do Type" 
+			create object type "String" (default "No content") attribute "Component Reference Name" 
+			create object type "String" (default "No content") attribute "Component Reference ID"
+			create object type "String" (default "No content") attribute "Component Role" 
+			// only used for condition
+			create object type "String" (default "No content") attribute "Label" 
+			create object type "String" (default "No content") attribute "Expression" 
+			// only used for seq, par, doElement, and condition
+			create object type "String" (default "No content") attribute "Parent ID" 
+			// internal attributes
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "New" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
+			createScenarioViews()
+		}
+		if( externalOK == 2 ) {
+			addLinkModuleDescriptor( UCMFolder, name( currentModule ), fileNameExternal, false, fileNameLinkUCMExt, "" )
+			create( externalLinkModule, name( currentModule ), fileNameExternal )
+		}
+		save currentModule
+		close( currentModule, false )
+	}
+	if( exists module theName )
+		createOK = true
+	return createOK
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - checks if all UCM modules exist, and creates them if not
+// - returns true if all modules were found or created successfully, false if one module still does not exist
+*/
+bool checkCreateUCMModules() {
+	bool createOK = true
+
+	createOK = checkCreateUCMModule( fileNameDevices )
+	if( createOK ) {
+		createOK = checkCreateUCMModule( fileNameResponsibilities )
+		if( createOK ) {
+			createOK = checkCreateUCMModule( fileNameComponents )
+			if( createOK ) {
+				createOK = checkCreateUCMModule( fileNameMaps )
+				if( createOK )
+					createOK = checkCreateUCMModule( fileNameScenarios )
+			}
+		}
+	}
+	return createOK
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - checks if all UCM link modules exists, creates them if not, and opens them for editing
+// - returns true if successful, otherwise returns false
+// - assumptions for this function
+//	- the UCM folder is the current folder
+*/
+bool checkCreateUCMLinkModules() {
+	Module currentModule
+	bool hostsOK = false, requestsOK = false, referencesOK = false, refinesOK = false, boundToOK = false, tracedByOK = false
+
+	if ( !( exists module fileNameLinkDevComp ) ) {
+		create( fileNameLinkDevComp, "devices host components", manyToMany, false )
+	}
+	hostsLinkModule = edit( fileNameLinkDevComp, false )
+	if ( !( exists module fileNameLinkDevResp ) ) {
+		current = create( fileNameLinkDevResp, "responsibilities request devices", manyToMany, false )
+		create object type "Integer" (default "0") attribute "Quantity" 
+	}
+	requestsLinkModule = edit( fileNameLinkDevResp, false )
+	if ( !( exists module fileNameLinkRefDef ) ) {
+		create( fileNameLinkRefDef, "responsibilities and components on maps reference responsibility and component definitions", manyToMany, false )
+	}
+	referencesLinkModule = edit( fileNameLinkRefDef, false )
+	if ( !( exists module fileNameLinkMapElem ) ) {
+		create( fileNameLinkMapElem, "plugin maps refine stubs, responsibilities and stubs refine maps", manyToMany, false )
+	}
+	refinesLinkModule = edit( fileNameLinkMapElem, false )
+	if ( !( exists module fileNameLinkMapComp ) ) {
+		create( fileNameLinkMapComp, "responsibilities and components are bound to components", manyToMany, false )
+	}
+	boundtoLinkModule = edit( fileNameLinkMapComp, false )
+	if ( !( exists module fileNameLinkMapScen ) ) {
+		create( fileNameLinkMapScen, "responsibilities and components are traced by scenarios", manyToMany, false )
+	}
+	tracedbyLinkModule = edit( fileNameLinkMapScen, false )
+	for currentModule in current Folder do {
+		if( isEdit( currentModule ) ) {
+			if( currentModule."Name" "" == fileNameLinkDevComp )
+				hostsOK = true
+			if( currentModule."Name" "" == fileNameLinkDevResp )
+				requestsOK = true
+			if( currentModule."Name" "" == fileNameLinkRefDef )
+				referencesOK = true
+			if( currentModule."Name" "" == fileNameLinkMapElem )
+				refinesOK = true
+			if( currentModule."Name" "" == fileNameLinkMapComp )
+				boundToOK = true
+			if( currentModule."Name" "" == fileNameLinkMapScen )
+				tracedByOK = true
+		}
+	}
+	return ( hostsOK && requestsOK && referencesOK && refinesOK && boundToOK && tracedByOK )
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - opens all UCM modules in the UCM folder for editing
+// - assumptions for this function
+//	- current folder is the UCM folder
+// - returns true if successful, otherwise returns false
+*/
+bool openUCMModules() {
+	Module currentModule
+	bool preparationOKDevices = false, preparationOKComponents = false
+	bool preparationOKResponsibilities = false, preparationOKMaps = false, preparationOKScenarios = false
+
+	deviceModule = edit( fileNameDevices, false )
+	componentModule = edit( fileNameComponents, false )
+	responsibilityModule = edit( fileNameResponsibilities, false )
+	mapModule = edit( fileNameMaps, false )
+	scenarioModule = edit( fileNameScenarios, false )
+	for currentModule in UCMFolder do {
+		if( isEdit( currentModule ) ) {
+			if( currentModule."Name" "" == fileNameDevices )
+				preparationOKDevices = true
+			if( currentModule."Name" "" == fileNameComponents )
+				preparationOKComponents = true
+			if( currentModule."Name" "" == fileNameResponsibilities )
+				preparationOKResponsibilities = true
+			if( currentModule."Name" "" == fileNameMaps )
+				preparationOKMaps = true
+			if( currentModule."Name" "" == fileNameScenarios )
+				preparationOKScenarios = true
+		}
+	}
+	return ( preparationOKDevices && preparationOKComponents && preparationOKResponsibilities && preparationOKMaps && preparationOKScenarios )
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - checks whether program was started from a UCM Module
+// - sets global variable UCMFolder and the current folder to the UCM folder
+// - returns true if successful, otherwise halts
+*/
+bool checkStartedFromUCMModule( string programName ) {
+	string buttons[] = { "Ok" } 
+	string n
+
+	if( !( null( current Module ) ) ) {
+print "debug: " name( current Module ) "\n"
+		n = name( current Module )
+		if( ( n != fileNameDevices ) && ( n != fileNameComponents ) && ( n != fileNameResponsibilities ) && ( n != fileNameMaps ) && ( n != fileNameScenarios ) ) {
+			messageBox( programName " must be started from a UCM module.\nPlease select a UCM module and start " programName " again.\n", buttons, msgError )
+			halt
+		}
+	}
+	else {
+		messageBox( programName " must be started from a UCM module.\nPlease select a UCM module and start " programName " again.\n", buttons, msgError )
+		halt
+	}
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - saves and closes all UCM and external modules
+// - returns true if successful, otherwise returns false
+*/
+bool saveCloseFinal() {
+	bool finalOK1 = false, finalOK2 = false, finalOK3 = false
+
+	finalOK1 = saveCloseAllModules( UCMFolder )
+	if( externalOK == 2 ) {
+		// save link module now because closing the external module may close the link module and prompt the user to save changes
+		save externalLinkModule
+		// close the external module before the link module because otherwise it may not be possible to close the link module
+		close( externalModule, true )
+		if( !( open module fileNameExternal ) )
+			finalOK2 = true
+		// closing the external module may have already closed the link module
+		if( open module fileNameLinkUCMExt ) {
+			close( externalLinkModule, true )
+		}
+		if( !( open module fileNameLinkUCMExt ) )
+			finalOK3 = true
+	}
+	else	{
+		finalOK2 = true
+		finalOK3 = true
+	}
+	return ( finalOK1 && finalOK2 && finalOK3 )
+}

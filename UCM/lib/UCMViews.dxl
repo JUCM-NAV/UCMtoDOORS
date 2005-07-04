@@ -1,0 +1,393 @@
+// @@@ investigate width of columns
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - Based on initial version by Bo Jiang
+// - creates views for all UCM modules
+*/
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - creates common views for deleted and new objects used in each module
+// - inserts column after the last column of the current view
+// - also creates common view for suspect links (keeps only the first three columns)
+// - always returns true
+// - assumptions for this function
+//	- the current module is the one to which the common views are to be added and 
+//	  it is ready to be used
+//	- external modules are stored in the same folder as the UCM folder
+*/
+bool createCommonViews() {
+	Column c
+	Filter f
+	string theLinkModule
+	int numberColumns = 0, i
+
+	for c in current Module do {
+		numberColumns++
+	}
+		
+	insert column numberColumns
+	attribute( column numberColumns, "Deleted" )
+	width( column numberColumns, 50 )            
+	f = attribute "Deleted" == "True" 
+	set f
+	filtering on 
+	refresh current
+	save view( "Deleted View" )
+	filtering off
+
+	delete column numberColumns
+	insert column numberColumns
+	attribute( column numberColumns, "New" )
+	width( column numberColumns, 50 )            
+	f = attribute "New" == "True" 
+	set f
+	filtering on 
+	refresh current
+	save view( "New Object View" )
+	filtering off
+
+	if( externalOK == 2 ) {
+		delete column numberColumns
+		f = hasNoLinks( linkFilterOutgoing, fullName( externalLinkModule ) )
+		set f
+		filtering on 
+		refresh current
+		save view( "No Link View" )
+		filtering off
+	}
+
+	for( i = 4; i <= numberColumns; i++ )
+		delete column 3
+	insert column 4
+	attribute( column 4, "Suspect In Links" )
+	width( column 4, 300 )            
+	insert column 5
+	attribute( column 5, "Suspect Out Links" )
+	width( column 5, 300 )
+	set( attribute "Suspect Out Links" != "No content" || attribute "Suspect In Links" != "No content" )
+	filtering on 
+	refresh current
+	save view( "Suspect View" )
+	filtering off
+
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - creates views for devices
+// - always returns true
+// - assumptions for this function
+//	- device module is the current module and is ready to be used
+*/
+bool createDeviceViews() {
+	load view( "Standard view" )
+	delete( column 0 )
+	width( column 0, 150 )
+	insert column 0
+	attribute( column 0, "ID" )
+	width( column 0, 50 )
+	insert column 2
+	attribute( column 2, "Description_" )
+	width( column 2, 100 )
+	insert column 3
+	attribute( column 3, "Speed Factor" )
+	width( column 3, 100 ) 
+	insert column 4
+	attribute( column 4, "Name_" )
+	width( column 4, 100 ) 
+	refresh current
+	save view( "Full Device View" )
+
+	delete column 4
+	refresh current
+	save view( "Device View" )
+
+	createCommonViews()
+	setDefaultViewForModule( current, "Device View" )  
+print "debug: created device views\n"
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - creates views for components
+// - always returns true
+// - assumptions for this function
+//	- component module is the current module and is ready to be used
+*/
+bool createComponentViews() {
+	Filter f
+
+	load view( "Standard view" )
+	delete( column 0 )
+	width( column 0, 150 )
+	insert column 0
+	attribute( column 0, "ID" )
+	width( column 0, 50 )
+	insert column 2
+	attribute( column 2, "Description_" )
+	width( column 2, 100 )
+	insert column 3
+	attribute( column 3, "Type" )
+	width( column 3, 50 )
+	insert column 4
+	attribute( column 4, "Device ID" )
+	width( column 4, 50 )         
+	insert column 5
+	attribute( column 5, "Name_" )
+	width( column 5, 100 )            
+	refresh current
+	save view( "Full Component View" )
+
+	delete column 5
+	refresh current
+	save view( "Component View" )
+
+	createCommonViews()
+	setDefaultViewForModule( current, "Component View" )           
+print "debug: created component views\n"
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - creates views for responsibilities
+// - always returns true
+// - assumptions for this function
+//	- responsibility module is the current module and is ready to be used
+*/
+bool createResponsibilityViews() {
+	Filter f
+
+	load view( "Standard view" )
+	delete( column 0 )
+	width( column 0, 150 )
+	insert column 0
+	attribute( column 0, "ID" )
+	width( column 0, 50 )
+	insert column 2
+	attribute( column 2, "Description_" )
+	width( column 2, 100 )
+	insert column 3
+	attribute( column 3, "Processor Demand" ) 
+	width( column 3, 150 )
+	insert column 4
+	attribute( column 4, "Name_" )
+	width( column 4, 100 )               
+	refresh current
+	save view( "Full Responsibility View" )
+
+	delete column 4
+	refresh current
+	save view( "Responsibility View" )
+
+	createCommonViews()
+	setDefaultViewForModule( current, "Responsibility View" )          
+print "debug: created responsiblity views\n"
+	return true
+}
+
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - creates views for maps
+// - always returns true
+// - assumptions for this function
+//	- map module is the current module and is ready to be used
+*/
+bool createMapViews() {
+	Filter f
+
+	load view( "Standard view" )
+	delete( column 0 )
+	width( column 0, 150 )
+	insert column 0
+	attribute( column 0, "ID" )
+	width( column 0, 50 )
+	insert column 2
+	attribute( column 2, "Description_" )
+	width( column 2, 100 )
+	insert column 3
+	attribute( column 3, "Type" )
+	width( column 3, 50 )     
+	insert column 4
+	attribute( column 4, "Definition ID" )
+	width( column 4, 100 )
+	insert column 5
+	attribute( column 5, "Enclosing Component" )
+	width( column 5, 50 )        
+	insert column 6
+	attribute( column 6, "Stub Type" )
+	width( column 6, 100 )        
+	insert column 7
+	attribute( column 7, "Plugins" )
+	width( column 7, 100 )        
+	insert column 8
+	attribute( column 8, "Map Title" )
+	width( column 8, 100 )        
+	insert column 9
+	attribute( column 9, "Map File Name" )
+	width( column 9, 100 )        
+	insert column 10
+	attribute( column 10, "Component Role" )
+	width( column 10, 100 )        
+	insert column 11
+	attribute( column 11, "Parent Component" )
+	width( column 11, 50 )        
+	insert column 12
+	attribute( column 12, "Anchored" )
+	width( column 12, 50 )        
+	insert column 13
+	attribute( column 13, "Width" )
+	width( column 13, 50 )        
+	insert column 14
+	attribute( column 14, "Height" )
+	width( column 14, 50 )        
+	insert column 15
+	attribute( column 15, "Fx" )
+	width( column 15, 50 )        
+	insert column 16
+	attribute( column 16, "Fy" )
+	width( column 16, 50 )        
+	insert column 17
+	attribute( column 17, "Name_" )
+	width( column 17, 100 )        
+	refresh current
+	save view( "Full UCM View" )
+
+	delete column 5
+	delete column 5
+	delete column 5
+	delete column 5
+	delete column 5
+	refresh current
+	save view( "Component View" )
+
+	delete column 5
+	delete column 5
+	delete column 5
+	delete column 5
+	delete column 5
+	insert column 5
+	attribute( column 5, "Enclosing Component" )
+	width( column 5, 50 )        
+	refresh current
+	save view( "Responsibility View" )
+
+	delete column 4
+	delete column 4
+	insert column 4
+	attribute( column 4, "Stub Type" )
+	width( column 4, 100 )        
+	insert column 5
+	attribute( column 5, "Plugins" )
+	width( column 5, 100 )        
+	refresh current
+	save view( "Stub View" )
+
+	delete column 4
+	delete column 4
+	delete column 4
+	delete column 4
+	insert column 4
+	attribute( column 4, "Map Title" )
+	width( column 4, 100 )        
+	insert column 5
+	attribute( column 5, "Map File Name" )
+	width( column 5, 100 )        
+	refresh current
+	save view( "Map View" )
+
+	delete column 4
+	delete column 4
+	delete column 4
+	insert column 4
+	attribute( column 4, "Definition ID" )
+	width( column 4, 100 )
+	insert column 5
+	attribute( column 5, "Enclosing Component" )
+	width( column 5, 50 )        
+	insert column 6
+	attribute( column 6, "Stub Type" )
+	width( column 6, 100 )        
+	insert column 7
+	attribute( column 7, "Plugins" )
+	width( column 7, 100 )        
+	insert column 8
+	attribute( column 8, "Parent Component" )
+	width( column 8, 50 )        
+	refresh current
+	save view( "UCM View" )
+
+	createCommonViews()
+	setDefaultViewForModule( current, "UCM View" )        
+print "debug: created map views\n"
+	return true
+}  
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - creates views for scenarios
+// - always returns true
+// - assumptions for this function
+//	- scenario module is the current module and is ready to be used
+*/
+bool createScenarioViews() {
+	Filter f
+
+	load view( "Standard view" )
+	delete( column 0 )
+	width( column 0, 150 )
+	insert column 0
+	attribute( column 0, "ID" )
+	width( column 0, 50 )
+	insert column 2
+	attribute( column 2, "Description_" )
+	width( column 2, 100 )          
+	insert column 3
+	attribute( column 3, "Type" )
+	width( column 3, 50 )     
+	insert column 4
+	attribute( column 4, "Do Type" )
+	width( column 4, 50 )
+	insert column 5
+	attribute( column 5, "Component Reference Name" )
+	width( column 5, 100 )     
+	insert column 6
+	attribute( column 6, "Component Reference ID" )
+	width( column 6, 50 )     
+	insert column 7
+	attribute( column 7, "Component Role" )
+	width( column 7, 100 )     
+	insert column 8
+	attribute( column 8, "Label" )
+	width( column 8, 100 )
+	insert column 9
+	attribute( column 9, "Expression" )
+	width( column 9, 100 )
+	insert column 10
+	attribute( column 10, "Parent ID" )
+	width( column 10, 50 )
+	insert column 11
+	attribute( column 11, "Name_" )
+	width( column 11, 100 )
+	refresh current
+	save view( "Full Scenario View" )
+
+	delete column 6
+	delete column 6
+	delete column 6
+	delete column 6
+	delete column 6
+	delete column 6
+	refresh current
+	save view( "Scenario View" )
+
+	createCommonViews()
+	setDefaultViewForModule( current, "Scenario View" )
+print "debug: created scenario views\n"
+	return true
+}

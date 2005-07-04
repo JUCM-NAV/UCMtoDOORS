@@ -1,0 +1,40 @@
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May2005
+// - Based on initial version by Bo Jiang
+*/
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May2005
+// - imports responsibility (updates object if it exists otherwise creates new one)
+// - always returns true
+// - assumptions for this function
+//	- responsibilityModule exists and is ready to be used
+*/
+bool responsibility( string responsibilityID, string responsibilityName, string theDescription, string processorDemand ) {
+	Object foundObject
+
+	foundObject = findObject( responsibilityID, responsibilityModule )
+	if ( null foundObject ) {
+		foundObject = createNewObject( responsibilityModule )
+		foundObject."ID" = responsibilityID
+		foundObject."Object Heading" = responsibilityName
+		foundObject."Name_" = responsibilityName
+		foundObject."Description_" = theDescription           
+		foundObject."Processor Demand" = processorDemand
+		foundObject."New" = true
+		foundObject."Deleted" = false
+	}
+	else {
+		if( foundObject."Name_" "" != responsibilityName ) {
+			foundObject."Object Heading" = responsibilityName
+			foundObject."Name_" = responsibilityName  
+		}
+		if( foundObject."Description_" "" != theDescription )
+			foundObject."Description_" = theDescription
+		if( foundObject."Processor Demand" "" != processorDemand )
+			foundObject."Processor Demand" = processorDemand
+		foundObject."Deleted" = false
+	}
+print "debug: imported responsibility " foundObject."ID" "\n"
+	return true
+}

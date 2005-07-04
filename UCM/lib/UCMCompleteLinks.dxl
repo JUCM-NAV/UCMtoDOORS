@@ -1,0 +1,104 @@
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - performs initialization and exit functions when auto-completing external links
+*/
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - prepares DOORS for auto-completion of links
+//	- makes sure the program is started from a UCM module
+//	- makes sure that the selected folder has not been chosen by accident (sets global variable UCMFolder)
+//	- opens all external modules for editing/reading (sets global variables
+//	  externalModule, externalLinkModule) and checks if external attribute exists
+//	- makes sure that all modules are closed
+//	- opens all formal modules for editing (sets global variables deviceModule, componentModule, 
+//	  responsibilityModule, mapModule, scenarioModule)
+//	- opens all link modules for editing (sets global variables hostsLinkModule, requestsLinkModule,
+//	  referencesLinkModule, refinesLinkModule, boundtoLinkModule, tracedByLinkModule)
+// - halts if an error occurs or the user chooses "Quit", otherwise returns true
+*/
+bool beginCompleteLinks() {
+	int initOK = 1
+	string buttons1[] = { "Complete", "Quit" }, buttons3[] = { "Ok" } 
+
+	// make sure the the program was started from a UCM module in the correct folder
+	checkStartedFromUCMModule( "Auto Complete Links" )
+	initOK = messageBox( "Do you want to automatically complete \"" fileNameLinkUCMExt "\" links between\nUCM modules in folder \"" name( current Folder ) "\" and \"" fileNameExternal "\"?\n", buttons1, msgWarning )
+	if( initOK == 1 )
+		halt
+	UCMFolder = current Folder
+print "debug: correct folder\n"
+
+	// open external module for reading and external link module for editing
+	if( !( openExternalModules() ) ) {
+		messageBox( "One or both external modules (\"" fileNameExternal "\", \"" fileNameLinkUCMExt "\") could not be opened for reading or editing.\nAuto Complete Links cannot proceed.\n", buttons3, msgError )
+		halt
+	}
+	// check if external attribute exists
+	if( !( checkExternalAttribute() ) ) {
+		messageBox( "The external link module (\"" fileNameLinkUCMExt "\") does not have attribute \"" attributeExternalLink "\".\nAuto Complete Links cannot proceed.\n", buttons3, msgError )
+		halt
+	}
+print "debug: opened external modules for reading/editing\n"
+
+	// make sure all formal and link UCM modules are closed
+	if( !( saveCloseAllModules( UCMFolder ) ) ) {
+		messageBox( "The UCM folder still contains one or more open modules.\nAuto Complete Links cannot proceed.\nPlease close all open modules and start the import again.", buttons3, msgError )
+		halt
+	}
+print "debug: all modules closed\n"
+
+	// open all UCM modules for editing
+	if( !( openUCMModules() ) ) {
+		messageBox( "One or more UCM modules could not be opened for editing.\nAuto Complete Links cannot proceed.\n", buttons3, msgError )
+		halt
+	}
+print "debug: opened all UCM modules for editing\n"
+
+	// open all required UCM link modules for editing
+	if( !( checkCreateUCMLinkModules() ) ) {
+		messageBox( "One or more UCM link modules could not be opened for editing.\nAuto Complete Links cannot proceed.\n", buttons3, msgError )
+		halt
+	}	
+print "debug: opened all required UCM link modules for editing\n"
+
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - saves and closes all files
+// - always returns true
+*/
+bool endCompleteLinks() {
+	string buttons[] = { "Ok" } 
+
+	if( !( saveCloseFinal() ) ) {
+		messageBox( "Auto Complete Links has finished.\n\nOne or more of the modules in the UCM folder or the external modules are still open.\nPlease manually save and close all open formal and link modules.", buttons, msgWarning)
+		halt
+	}
+print "debug: saved and closed\n"
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - completes all external links based on manually created external links
+// - only called from within a module
+// - halts if initialization checks (beginCompleteLinks) fail, otherwise always returns true
+*/
+bool completeLinks() {
+	beginCompleteLinks()
+	removeGeneratedLinks( mapModule )
+	removeGeneratedLinks( responsibilityModule )
+	removeGeneratedLinks( componentModule )
+	removeGeneratedLinks( scenarioModule )
+print "debug: removed generated links\n"
+	autoCompleteMapLinks()
+	autoCompleteDefinitionLinks( responsibilityModule )
+	autoCompleteDefinitionLinks( componentModule )
+	autoCompleteScenarioLinks()
+print "debug: completed links\n"
+	endCompleteLinks()
+	return true
+}

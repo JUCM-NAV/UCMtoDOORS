@@ -1,0 +1,335 @@
+// @@@ dynamic stubs may have to be dealt with differently - which map to link to for a specific use case?
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - Based on initial version by Bo Jiang
+// - creates internal and external links for all UCM modules
+*/
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - creates links from the device module to the component module and from the 
+//   responsibility module to the device module
+// - always returns true
+// - assumptions for this function
+//	- deviceModule, componentModule, responsibilityModule, hostsLinkModule, and requestsLinkModule exist and are ready to be used
+*/
+bool createDeviceLinks() {
+	Object currentObject, targetObject
+	Link newLink
+	string s, p
+	int i, j
+	bool b
+
+	for currentObject in componentModule do {
+		// skip over deleted objects which could not be removed because of links
+		b = currentObject."Deleted"
+		if( !b ) {
+			// create link between device and component
+			targetObject = findObject( currentObject."Device ID" "", deviceModule )
+			if ( !( null targetObject ) )
+				currentObject<-fileNameLinkDevComp<-targetObject
+		}
+	}
+	for currentObject in responsibilityModule do {
+		// skip over deleted objects which could not be removed because of links
+		b = currentObject."Deleted"
+		if( !b ) {
+			// create links between responsibility and devices
+			p = currentObject."Processor Demand"
+			j = 0
+			for( i=0; i < length(p); i++ ) {
+				if( p[i] == ':' ) {
+					s = p[j:i-1]
+					j = i+1   
+					targetObject = findObject( s, deviceModule )
+					if ( !( null targetObject ) )
+						newLink = currentObject->fileNameLinkDevResp->targetObject
+				}
+				else {
+					// assign quantity to attribute of the link
+					if( p[i] == ';' ) {
+						s = p[j:i-1]
+						newLink."Quantity" = s
+						j = i+1   
+					}
+				}		
+			}                  
+		}
+	}
+print "debug: created device links\n"
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - creates links within the maps module and from the maps module to the definition modules
+// - always returns true
+// - assumptions for this function
+//	- mapModule, responsibilityModule, componentModule exist and are ready to be used
+//	- referencesLinkModule, refinesLinkModule, boundToLinkModule exist and are ready to be used
+*/
+bool createMapLinks() {
+	Object currentObject, targetObject
+	string s, p
+	int i, j
+	bool b
+
+	for currentObject in mapModule do {
+		// skip over deleted objects which could not be removed because of links
+		b = currentObject."Deleted"
+		if( !b ) {
+			if( currentObject."Type" "" == "respRef" ) {
+				// create link between respRef and responsibility module
+				targetObject = findObject( currentObject."Definition ID" "", responsibilityModule )
+				currentObject->fileNameLinkRefDef->targetObject
+				// create link between respRef and compRef in map module
+				targetObject = findObject( currentObject."Enclosing Component" "", mapModule )
+				if ( !( null targetObject ) )
+					currentObject->fileNameLinkMapComp->targetObject
+				// create link between respRef and map in map module
+				targetObject = parent( currentObject )
+				currentObject->fileNameLinkMapElem->targetObject
+			}
+			if( currentObject."Type" "" == "compRef" ) {
+				// create link between compRef and component module
+				targetObject = findObject( currentObject."Definition ID" "", componentModule )
+				if ( !( null targetObject ) )
+					currentObject->fileNameLinkRefDef->targetObject
+				// create link between compRef and parent component in map module
+				targetObject = findObject( currentObject."Parent Component" "", mapModule )
+				if ( !( null targetObject ) )
+					currentObject->fileNameLinkMapComp->targetObject
+				// create link between compRef and map in map module
+				targetObject = parent( currentObject )
+				currentObject->fileNameLinkMapElem->targetObject
+			}
+			if( currentObject."Type" "" == "stub" ) {
+				// create links between stub and plugins in the map module
+				p = currentObject."Plugins"
+				j = 0
+				for( i=0; i < length(p); i++ ) {
+					if( p[i] == ';' ) {
+						s = p[j:i-1]
+						j = i+1   
+						targetObject = findObject( s, mapModule )
+						currentObject<-fileNameLinkMapElem<-targetObject
+					}
+				}                  
+				// create link between stub and map in map module
+				targetObject=parent(currentObject)
+				currentObject->fileNameLinkMapElem->targetObject
+			}
+		}
+	}
+print "debug: created map links\n"
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - creates links from the maps module to the scenario module
+// - always returns true
+// - assumptions for this function
+//	- mapModule, scenarioModule, and tracedByLinkModule exist and are ready to be used
+*/
+bool createScenarioLinks() {
+	Object currentObject, targetObject
+	bool b
+
+	for currentObject in scenarioModule do {
+		if( currentObject."Do Type" "" == "resp" ) {
+			// skip over deleted objects which could not be removed because of links
+			b = currentObject."Deleted"
+			if( !b ) {
+				// create link between Resp and respRef in map module
+				targetObject = findObject( currentObject."ID" "", mapModule )
+				currentObject<-fileNameLinkMapScen<-targetObject
+				// create link between Resp and compRef in map module
+				targetObject = findObject( currentObject."Component Reference ID" "", mapModule )
+				if ( !( null targetObject ) )
+					currentObject<-fileNameLinkMapScen<-targetObject
+			}   
+		}
+	}
+print "debug: created scenario links\n"
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - removes all generated links for the given module
+// - always returns true
+// - assumptions for this function
+//	- link objects have the attribute attributeExternalLink
+*/
+bool removeGeneratedLinks( Module theModule ) {
+	Object currentObject
+	Link l
+	bool b
+
+	for currentObject in theModule do {
+		// skip over deleted objects which could not be removed because of links
+		// this ensures that the external link which was the reason to keep this object is not removed and available for analysis
+		b = currentObject."Deleted"
+		if( !b ) {
+			// get all external links
+			for l in currentObject->fileNameLinkUCMExt do {
+				// remove link if generated
+				b = l.attributeExternalLink
+				if( b )
+					delete l
+			}
+		}
+	}
+	flushDeletions()
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - checks if the sourceObject is already linked to the targetObject in theLinkModule
+// - returns true if it is already linked, otherwise false
+*/
+bool alreadyLinked( Object sourceObject, Object targetObject, string theLinkModuleName ) {
+	Link l
+
+	for l in sourceObject->theLinkModuleName do {
+		if( target l == targetObject ) {
+			return true
+		}
+	}
+	return false
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - automatically completes links between the upper-level requirements and the map module
+// - always returns true
+// - assumptions for this function
+//	- all children of a "map" object are linked via "Refines"
+//	- refinesLinkModule and externalLinkModule exist and are ready to be used
+*/
+bool completeMapLinks( Object theObject ) {
+	Object targetObject, sourceObject
+	Skip targetObjects = create
+	Link l, newLink
+	int i = 0
+
+	// get all the external links
+	for l in theObject->fileNameLinkUCMExt  do {
+		targetObject = target l
+		put( targetObjects, i, targetObject )
+		i++
+	}
+	// get all linked map element objects and auto-complete links
+	for l in theObject<-fileNameLinkMapElem do {
+		sourceObject = source l
+		// if it has not already been created, create link and mark as generated
+		for targetObject in targetObjects do {
+			if( !( alreadyLinked( sourceObject, targetObject, fileNameLinkUCMExt ) ) ) {
+				newLink = sourceObject->fileNameLinkUCMExt->targetObject
+				newLink.attributeExternalLink = true
+			}
+		}
+	}
+	// recurse to next level
+	for l in theObject<-fileNameLinkMapElem do {
+ 		completeMapLinks( source l )
+	}
+	delete targetObjects
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - automatically completes links between the upper-level requirements and the map module
+// - always returns true
+// - assumptions for this function
+//	- mapModule exists and is ready to be used
+*/
+bool autoCompleteMapLinks() {
+	Object currentObject
+
+	// since all children of a "map" object are linked via "Refines", it is ensured that 
+	// the recursion completeMapLinks will deal with each child of a "map" object
+	// therefore it is sufficient to only go through the top level (= "map") objects 
+	for currentObject in top mapModule do {
+		completeMapLinks( currentObject )
+	}
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - automatically completes links between the upper-level requirements and the definition modules
+// - always returns true
+// - assumptions for this function
+//	- referencesLinkModule and externalLinkModule exist and are ready to be used
+*/
+bool autoCompleteDefinitionLinks( Module theModule ) {
+	Object currentObject, sourceObject, targetObject
+	Link ls, lt, newLink
+
+	for currentObject in theModule do {
+		// get all linked references
+		for ls in currentObject<-fileNameLinkRefDef do {
+			sourceObject = source ls
+			// get all linked external objects and auto-complete links
+			for lt in sourceObject->fileNameLinkUCMExt do {
+				targetObject = target lt
+				if( !( alreadyLinked( currentObject, targetObject, fileNameLinkUCMExt ) ) ) {
+					newLink = currentObject->fileNameLinkUCMExt->targetObject
+					newLink.attributeExternalLink = true
+				}
+			}
+		}
+	}
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - automatically completes links between the upper-level requirements and the scenario module
+// - always returns true
+// - assumptions for this function
+//	- scenarioModule, tracedByLinkModule, and externalLinkModule exist and are ready to be used
+//	- if S is the last executed scenario object and R is the currently executed responsibility, then R is part of S
+*/
+bool autoCompleteScenarioLinks() {
+	Object currentObject, currentSourceObject, sourceObject, targetObject
+	Link ls, lt, newLink
+	int i
+
+	for currentObject in scenarioModule do {
+		if( currentObject."Type" "" == "scenario" ) {
+			currentSourceObject = currentObject
+		}
+		if( currentObject."Do Type" "" == "resp" ) {
+			// get all linked references
+			for ls in currentObject<-fileNameLinkMapScen do {
+				sourceObject = source ls
+				// count the number of links
+				i = 0
+				for lt in sourceObject->fileNameLinkUCMExt do {
+					i++
+				}
+				// get all linked external objects and auto-complete links (only if one link exists)
+				// this is done because responsibilities may be linked to many upper-level requirements (i.e.
+				// used in many different situations) but only one is applicable to the current scenario
+				// requirements with only one link to upper-level requirements are guaranteed to link to the correct one
+				// @@@ what should be done with responsibilities with more than one link?
+				if( i == 1 ) {
+					for lt in sourceObject->fileNameLinkUCMExt do {
+						targetObject = target lt
+						if( !( alreadyLinked( currentSourceObject, targetObject, fileNameLinkUCMExt ) ) ) {
+							newLink = currentSourceObject->fileNameLinkUCMExt->targetObject
+							newLink.attributeExternalLink = true
+						}
+					}
+				}
+			}
+		}
+	}
+	return true
+}

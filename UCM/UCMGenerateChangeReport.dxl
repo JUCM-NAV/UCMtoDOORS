@@ -1,0 +1,9 @@
+// UCMGenerateChangeReport.dxl
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May2005
+*/
+#include "addins/UCM/lib/UCMUtilities.dxl"
+pragma runLim,0
+
+generateChangeReport()

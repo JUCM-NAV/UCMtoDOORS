@@ -1,0 +1,40 @@
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May2005
+// - Based on initial version by Bo Jiang
+*/
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May2005
+// - imports devices (updates object if it exists otherwise creates new one)
+// - always returns true
+// - assumptions for this function
+//	- deviceModule exists and is ready to be used
+*/
+bool device( string deviceID, string deviceName, string theDescription, string speedFactor ) {
+	Object foundObject
+
+	foundObject = findObject( deviceID, deviceModule )
+	if ( null foundObject ) {
+		foundObject = createNewObject( deviceModule )
+		foundObject."ID" = deviceID
+		foundObject."Object Heading" = deviceName           
+		foundObject."Name_" = deviceName
+		foundObject."Description_" = theDescription           
+		foundObject."Speed Factor" = speedFactor    
+		foundObject."New" = true
+		foundObject."Deleted" = false
+	}
+	else {
+		if( foundObject."Name_" "" != deviceName ) {
+			foundObject."Object Heading" = deviceName   
+			foundObject."Name_" = deviceName    
+		}
+		if( foundObject."Description_" "" != theDescription )
+			foundObject."Description_" = theDescription       
+		if( foundObject."Speed Factor" "" != speedFactor )
+			foundObject."Speed Factor" = speedFactor    
+		foundObject."Deleted" = false
+	}
+print "debug: imported device " foundObject."ID" "\n"
+	return true
+}

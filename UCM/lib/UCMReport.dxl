@@ -1,0 +1,212 @@
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - generates a change report for UCM objects with suspect links
+*/
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - prepares DOORS for the generation of the change report
+//	- makes sure the program is started from a UCM module
+//	- makes sure that the selected folder has not been chosen by accident (sets global variable UCMFolder)
+//	- opens all external modules for editing/reading (sets global variables
+//	  externalModule, externalLinkModule)
+//	- makes sure that all modules are closed
+//	- opens all formal modules for editing (sets global variables deviceModule, componentModule, 
+//	  responsibilityModule, mapModule, scenarioModule)
+// - halts if an error occurs or the user chooses "Quit", otherwise returns true
+*/
+bool beginGenerateChangeReport() {
+	int initOK = 1
+	string buttons1[] = { "Report", "Quit" }, buttons3[] = { "Ok" } 
+
+	// make sure the the program was started from a UCM module in the correct folder
+	checkStartedFromUCMModule( "Report Changes" )
+	initOK = messageBox( "Do you want to report changes in external modules\nwhich impact the UCM modules in folder \"" name( current Folder ) "\"?\n", buttons1, msgWarning )
+	if( initOK == 1 )
+		halt
+	UCMFolder = current Folder
+print "debug: correct folder for change report\n"
+
+	// open external module for reading and external link module for editing
+	if( !( openExternalModules() ) ) {
+		messageBox( "One or both external modules (\"" fileNameExternal "\", \"" fileNameLinkUCMExt "\") could not be opened for reading or editing.\nReport Change cannot proceed.\n", buttons3, msgError )
+		halt
+	}
+print "debug: opened external modules for reading/editing\n"
+
+	// make sure all formal and link UCM modules are closed
+	if( !( saveCloseAllModules( UCMFolder ) ) ) {
+		messageBox( "The UCM folder still contains one or more open modules.\nReport Change cannot proceed.\nPlease close all open modules and start the import again.", buttons3, msgError )
+		halt
+	}
+print "debug: all modules closed\n"
+
+	// open all UCM modules for editing
+	if( !( openUCMModules() ) ) {
+		messageBox( "One or more UCM modules could not be opened for editing.\nReport Change cannot proceed.\n", buttons3, msgError )
+		halt
+	}
+print "debug: opened all UCM modules for editing\n"
+
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - saves and closes all files
+// - always returns true
+*/
+bool endGenerateChangeReport() {
+	string buttons[] = { "Ok" } 
+
+	if( !( saveCloseFinal() ) ) {
+		messageBox( "Report Change has finished.\n\nOne or more of the modules in the UCM folder or the external modules are still open.\nPlease manually save and close all open formal and link modules.", buttons, msgWarning)
+		halt
+	}
+print "debug: saved and closed\n"
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - finds the last date a suspect link between the given UCM object and the given external object was cleared
+// - if linkDirection equals "IN", only incoming links are considered
+// - if linkDirection equals "OUT", only outgoing links are considered
+// - the clear date is found by searching for a history record entry of type commentObject
+// - the newValue of such a history record entry will read:
+//	- "Cleared suspect <IN or OUT>-link <from or to> object <NUMBER> in '<FULLMODULENAME>'."
+// - returns the last date the link was cleared or the creation date of the UCM object if link was never cleared
+// - assumptions for this function
+//	- only one type of link exists between a UCM object and an external object (otherwise the search string is not unique)
+*/
+Date findClearDate( Object myUCMObject, Object myExternalObject, string linkDirection ) {
+	History currentHistory
+	Date dateCleared = "1 Jan 1970"
+	string searchText
+
+	// create search string to be found in newValue
+	searchText = "Cleared suspect "
+	if( linkDirection == "IN" )
+		searchText = searchText "in-link from object "
+	if( linkDirection == "OUT" )
+		searchText = searchText "out-link to object "
+	searchText = searchText myExternalObject."Absolute Number" " in '" fullName( module ( myExternalObject ) ) "'."
+	// find history record entry which matches search string
+	for currentHistory in myUCMObject do {
+		// in case link was never cleared, dateCleared is set to the date the object was created
+		// since this is the first entry in the history record and the for looop starts with the oldest entry, dateCleared will 
+		// be overwritten if the link was cleared at some point
+		if( currentHistory.type == createObject )
+			dateCleared = currentHistory.date
+		if( currentHistory.type == commentObject && currentHistory.newValue == searchText ) {
+			dateCleared = currentHistory.date
+print "debug: found match for object " myUCMObject."ID" "   date cleared: " dateCleared "\n"
+		}
+	}
+	return dateCleared
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - compiles the changes from a given cutoffDate using the history of a given object
+// - only changes of type modifyObject are compiled
+// - returns changes or "" if there are no changes (note that rich text is used for changes)
+*/
+string compileChanges( Date cutoffDate, Object myObject ) {
+	History currentHistory
+	string changes = "", oldVersion, newVersion
+
+	for currentHistory in myObject do {
+		if( currentHistory.type == modifyObject && cutoffDate <= currentHistory.date ) {
+			oldVersion = currentHistory.oldValue
+			newVersion = currentHistory.newValue
+			changes = changes "on " currentHistory.date " for attribute '" currentHistory.attrName "'\n" oldVersion "\n--->\n" newVersion "\n\n"
+		}
+	}
+	return changes
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - generates change report for UCM objects in myModule with suspect links by compiling change information and 
+//   assigning it to the "Suspect In Links" and "Suspect Out Links" attributes
+// - assumptions for this function
+//	- all external modules with links to myModule are open (otherwise suspect links will not be detected)
+//	- internal links do not cause suspect links for UCM objects because UCM modules are not supposed to be changed by a DOORS user
+// - always returns true
+*/
+bool generateModuleChangeReport( Module myModule ) {
+	Object currentObject, targetObject, sourceObject
+	Link currentLink
+	Date cutoffDate
+	string changes = "", allChanges = ""
+	int numberOutLinks = 0
+	int numberInLinks = 0
+
+	current = myModule
+	load view( "Standard view" )
+	for currentObject in myModule do {
+		// skips need to be created and deleted each time, otherwise loop with skip does not work correctly
+		Skip suspectOutLinks = create
+		Skip suspectInLinks = create
+		numberOutLinks = fnDetermineSuspectOutLinks( currentObject, suspectOutLinks )
+		numberInLinks = fnDetermineSuspectInLinks( currentObject, suspectInLinks )
+		if( numberOutLinks > 0 ) {
+			for currentLink in suspectOutLinks do {
+				targetObject = target currentLink
+				// find date suspicion was cleared for link to targetObject from currentObject
+				cutoffDate = findClearDate( currentObject, targetObject, "OUT" )
+				// compile history data from target object after cutoffDate
+				changes = "Object " targetObject."Absolute Number" " in '" fullName( module( targetObject ) ) "' changed.\n"
+				changes = changes compileChanges( cutoffDate, targetObject )
+				allChanges = allChanges changes
+print "debug: compiled changes for " currentObject."ID" " (" targetObject."Absolute Number" " in " fullName( module( targetObject ) ) ")\n"
+			}
+		}
+		if( allChanges == "" )
+			allChanges = "No content"
+		currentObject."Suspect Out Links" = richText allChanges
+		allChanges = ""
+		if( numberInLinks > 0 ) {
+			for currentLink in suspectInLinks do {
+				sourceObject = source currentLink
+				// find date suspicion was cleared for link from sourceObject to currentObject
+				cutoffDate = findClearDate( currentObject, sourceObject, "IN" )
+				// compile history data from source object after cutoffDate
+				changes = "Object " sourceObject."Absolute Number" " in '" fullName( module( sourceObject ) ) "' changed.\n"
+				changes = changes compileChanges( cutoffDate, sourceObject )
+				allChanges = allChanges changes
+print "debug: compiled changes for " currentObject."ID" " (" sourceObject."Absolute Number" " in " fullName( module( sourceObject ) ) ")\n"
+			}
+		}
+		if( allChanges == "" )
+			allChanges = "No content"
+		currentObject."Suspect In Links" = richText allChanges
+		allChanges = ""
+		// skips need to be created and deleted each time, otherwise loop with skip does not work correctly
+		delete suspectOutLinks
+		delete suspectInLinks
+	}
+print "debug: reported change\n"
+	return true
+}
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - generates change report for all UCM modules
+// - only called from within a module
+// - assumptions for this function
+//	- all external modules with links to UCM modules are open (otherwise suspect links will not be detected)
+//	- internal links do not cause suspect links for UCM objects because UCM modules are not supposed to be changed by a DOORS user
+// - halts if initialization checks (beginGenerateChangeReport) fail, otherwise always returns true
+*/
+bool generateChangeReport() {
+	beginGenerateChangeReport()
+	generateModuleChangeReport( deviceModule )
+	generateModuleChangeReport( componentModule )
+	generateModuleChangeReport( responsibilityModule )
+	generateModuleChangeReport( mapModule )
+	generateModuleChangeReport( scenarioModule )
+	endGenerateChangeReport()
+	return true
+}

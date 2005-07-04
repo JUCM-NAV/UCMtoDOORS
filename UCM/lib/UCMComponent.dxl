@@ -1,0 +1,43 @@
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May2005
+// - Based on initial version by Bo Jiang
+*/
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May2005
+// - imports component (updates object if it exists otherwise creates new one)
+// - always returns true
+// - assumptions for this function
+//	- componentModule exists and is ready to be used
+*/
+bool component( string componentID, string componentName, string componentType, string theDescription, string hostedDeviceID ) {
+	Object foundObject
+
+	foundObject = findObject( componentID, componentModule )
+	if ( null foundObject ) {
+		foundObject = createNewObject( componentModule )
+		foundObject."ID" = componentID
+		foundObject."Object Heading" = componentName
+		foundObject."Name_" = componentName
+		foundObject."Type" = componentType
+		foundObject."Description_" = theDescription           
+		foundObject."Device ID" = hostedDeviceID            
+		foundObject."New" = true
+		foundObject."Deleted" = false
+	}
+	else {
+		if( foundObject."Name_" "" != componentName ) {
+			foundObject."Object Heading" = componentName
+			foundObject."Name_" = componentName    
+		}
+		if( foundObject."Type" "" != componentType )
+			foundObject."Type" = componentType    
+		if( foundObject."Description_" "" != theDescription )
+			foundObject."Description_" = theDescription    
+		if( foundObject."Device ID" "" != hostedDeviceID )
+			foundObject."Device ID" = hostedDeviceID    
+		foundObject."Deleted" = false
+	}
+print "debug: imported component " foundObject."ID" "\n"
+	return true
+}
