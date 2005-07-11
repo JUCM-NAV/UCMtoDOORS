@@ -1,7 +1,7 @@
 // @@@ dynamic stubs may have to be dealt with differently - which map to link to for a specific use case?
 
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May-Jun2005
+// Author Gunter Mussbacher, May-Jul2005
 // - Based on initial version by Bo Jiang
 // - creates internal and external links for all UCM modules
 */
@@ -289,7 +289,7 @@ bool autoCompleteDefinitionLinks( Module theModule ) {
 }
 
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May-Jun2005
+// Author Gunter Mussbacher, May-Jul2005
 // - automatically completes links between the upper-level requirements and the scenario module
 // - always returns true
 // - assumptions for this function
@@ -300,6 +300,10 @@ bool autoCompleteScenarioLinks() {
 	Object currentObject, currentSourceObject, sourceObject, targetObject
 	Link ls, lt, newLink
 	int i
+	bool externalAttributeOK, isCommon
+
+	// in the case of responsibilities with more than one link, links can only be extablished if external module has required attribute
+	externalAttributeOK = checkExternalAttribute( externalModule, attributeExternalModule )
 
 	for currentObject in scenarioModule do {
 		if( currentObject."Type" "" == "scenario" ) {
@@ -318,13 +322,29 @@ bool autoCompleteScenarioLinks() {
 				// this is done because responsibilities may be linked to many upper-level requirements (i.e.
 				// used in many different situations) but only one is applicable to the current scenario
 				// requirements with only one link to upper-level requirements are guaranteed to link to the correct one
-				// @@@ what should be done with responsibilities with more than one link?
 				if( i == 1 ) {
 					for lt in sourceObject->fileNameLinkUCMExt do {
 						targetObject = target lt
 						if( !( alreadyLinked( currentSourceObject, targetObject, fileNameLinkUCMExt ) ) ) {
 							newLink = currentSourceObject->fileNameLinkUCMExt->targetObject
 							newLink.attributeExternalLink = true
+						}
+					}
+				}
+				// if responsibilities has more than one link, then establish links only with 
+				// requirements flagged as common
+				else {
+					if( externalAttributeOK ) {
+						for lt in sourceObject->fileNameLinkUCMExt do {
+							targetObject = target lt
+							// if the requirement is flagged as common ...
+							isCommon = targetObject.attributeExternalModule
+							if( isCommon ) {
+								if( !( alreadyLinked( currentSourceObject, targetObject, fileNameLinkUCMExt ) ) ) {
+									newLink = currentSourceObject->fileNameLinkUCMExt->targetObject
+									newLink.attributeExternalLink = true
+								}
+							}
 						}
 					}
 				}

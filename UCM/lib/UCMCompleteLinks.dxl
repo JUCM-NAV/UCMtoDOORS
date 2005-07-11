@@ -1,10 +1,10 @@
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May-Jun2005
+// Author Gunter Mussbacher, May-Jul2005
 // - performs initialization and exit functions when auto-completing external links
 */
 
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May-Jun2005
+// Author Gunter Mussbacher, May-Jul2005
 // - prepares DOORS for auto-completion of links
 //	- makes sure the program is started from a UCM module
 //	- makes sure that the selected folder has not been chosen by accident (sets global variable UCMFolder)
@@ -35,7 +35,7 @@ print "debug: correct folder\n"
 		halt
 	}
 	// check if external attribute exists
-	if( !( checkExternalAttribute() ) ) {
+	if( !( checkExternalAttribute( externalLinkModule, attributeExternalLink ) ) ) {
 		messageBox( "The external link module (\"" fileNameLinkUCMExt "\") does not have attribute \"" attributeExternalLink "\".\nAuto Complete Links cannot proceed.\n", buttons3, msgError )
 		halt
 	}

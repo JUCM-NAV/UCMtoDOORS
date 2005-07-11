@@ -1,11 +1,11 @@
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May-Jun2005
+// Author Gunter Mussbacher, May-Jul2005
 // - Based on initial version by Bo Jiang
 // - performs initialization and exit functions when importing a UCM file into DOORS
 */
 
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May-Jun2005
+// Author Gunter Mussbacher, May-Jul2005
 // - prepares DOORS for import
 //	- makes sure that the selected folder has not been chosen by accident
 //	- makes sure that the UCM folder exists (sets global variable UCMFolder)
@@ -51,7 +51,7 @@ print "debug: UCM folder exists\n"
 		halt
 	// check if the external attribute exists (only needs to be performed if auto-completion of links can be done)
 	if( externalOK == 2 ) {
-		if( !( checkExternalAttribute() ) ) {
+		if( !( checkExternalAttribute( externalLinkModule, attributeExternalLink ) ) ) {
 			externalOK = messageBox( "The external link module (\"" fileNameLinkUCMExt "\") does not have attribute \"" attributeExternalLink "\".\nImport of UCM module can proceed but will not create external links.\n\nDo you want to continue with the import?", buttons2, msgWarning )
 		}
 		if( externalOK == 1 )

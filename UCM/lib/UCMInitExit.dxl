@@ -1,5 +1,5 @@
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May-Jun2005
+// Author Gunter Mussbacher, May-Jul2005
 // - Based on initial version by Bo Jiang
 // - provides services for initialization and exit of applications
 */
@@ -51,15 +51,15 @@ bool openExternalModules() {
 }
 
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May-Jun2005
+// Author Gunter Mussbacher, May-Jul2005
 // - checks whether the external attribute exists for the external link module
 // - assumptions for this function
 //	- external link module exists
 // - returns true if the attribute exists, otherwise returns false
 */
-bool checkExternalAttribute() {
-	current = externalLinkModule
-	return ( exists attribute attributeExternalLink )
+bool checkExternalAttribute( Module theModule, string theAttribute ) {
+	current = theModule
+	return ( exists attribute theAttribute )
 }
 
 /*************************************************************************************** 
