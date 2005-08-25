@@ -302,7 +302,7 @@ bool autoCompleteScenarioLinks() {
 	int i
 	bool externalAttributeOK, isCommon
 
-	// in the case of responsibilities with more than one link, links can only be extablished if external module has required attribute
+	// in the case of responsibilities with more than one link, links can only be established if external module has required attribute
 	externalAttributeOK = checkExternalAttribute( externalModule, attributeExternalModule )
 
 	for currentObject in scenarioModule do {

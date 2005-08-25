@@ -91,13 +91,14 @@ bool respRef( string hyperedgeID, int fx, int fy, string enclosingComponent, str
 		foundObject."Deleted" = false
 	}        
 	else {
-		if( foundObject."Name_" "" != name ) {
+		if( foundObject."Object Heading" "" != currentMapObject."Name_" "." name ) {
 			foundObject."Object Heading" = currentMapObject."Name_" "." name
+		}
+		if( foundObject."Name_" "" != name ) {
 			foundObject."Name_" = name
 		}
 		if( parent( foundObject ) != currentMapObject ) {
 			move( foundObject, below currentMapObject )
-			foundObject."Object Heading" = currentMapObject."Name_" "." name
 		}
 		i = foundObject."Fx"
 		if( i != fx )
@@ -150,13 +151,14 @@ bool compRef( string componentRefID, int fx, int fy, int width, int height, stri
 		foundObject."Deleted" = false
 	}        
 	else {
+		if( foundObject."Object Heading" "" != currentMapObject."Name_" "." name ) {
+			foundObject."Object Heading" = currentMapObject."Name_" "." name
+		}
 		if( foundObject."Name_" "" != name ) {
-			foundObject."Object Heading" = currentMapObject."_Name" "." name
 			foundObject."Name_" = name
-		}   
+		}
 		if( parent( foundObject ) != currentMapObject ) {
 			move( foundObject, below currentMapObject )
-			foundObject."Object Heading" = currentMapObject."Name_" "." name
 		}
 		i = foundObject."Fx"
 		if( i != fx )
@@ -213,13 +215,14 @@ bool stub( string hyperedgeID, int fx, int fy, string name, string stubType, str
 		foundObject."Deleted" = false
 	}        
 	else {
+		if( foundObject."Object Heading" "" != currentMapObject."Name_" "." name ) {
+			foundObject."Object Heading" = currentMapObject."Name_" "." name
+		}
 		if( foundObject."Name_" "" != name ) {
-			foundObject."Object Heading" = currentMapObject."_Name" "." name
-			foundObject."Name_"=name
-		}   
+			foundObject."Name_" = name
+		}
 		if( parent( foundObject ) != currentMapObject ) {
 			move( foundObject, below currentMapObject )
-			foundObject."Object Heading" = currentMapObject."Name_" "." name
 		}
 		i = foundObject."Fx"
 		if( i != fx )
