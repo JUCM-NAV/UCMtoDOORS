@@ -1,5 +1,5 @@
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May2005
+// Author Gunter Mussbacher, May-Aug2005
 // - Based on initial version by Bo Jiang
 // - general assumptions
 //	- mapModule exists and is ready to be used
@@ -62,7 +62,7 @@ print "debug: imported map " foundObject."ID" "\n"
 }
 
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May2005
+// Author Gunter Mussbacher, May-Aug2005
 // - imports responsibility reference (updates object if it exists otherwise creates new one)
 // - always returns true
 // - assumptions for this function
@@ -119,7 +119,7 @@ print "debug: imported respRef " foundObject."ID" "\n"
 }
 
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May2005
+// Author Gunter Mussbacher, May-Aug2005
 // - imports component reference (updates object if it exists otherwise creates new one)
 // - always returns true
 // - assumptions for this function
@@ -187,7 +187,7 @@ print "debug: imported compRef " foundObject."ID" "\n"
 }
 
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May2005
+// Author Gunter Mussbacher, May-Aug2005
 // - imports stub (updates object if it exists otherwise creates new one)
 // - always returns true
 // - assumptions for this function

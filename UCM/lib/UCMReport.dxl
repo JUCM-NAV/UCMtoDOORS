@@ -1,5 +1,5 @@
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May-Jun2005
+// Author Gunter Mussbacher, May-Aug2005
 // - generates a change report for UCM objects with suspect links
 */
 
@@ -68,40 +68,23 @@ print "debug: saved and closed\n"
 }
 
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May-Jun2005
-// - finds the last date a suspect link between the given UCM object and the given external object was cleared
-// - if linkDirection equals "IN", only incoming links are considered
-// - if linkDirection equals "OUT", only outgoing links are considered
-// - the clear date is found by searching for a history record entry of type commentObject
-// - the newValue of such a history record entry will read:
-//	- "Cleared suspect <IN or OUT>-link <from or to> object <NUMBER> in '<FULLMODULENAME>'."
-// - returns the last date the link was cleared or the creation date of the UCM object if link was never cleared
-// - assumptions for this function
-//	- only one type of link exists between a UCM object and an external object (otherwise the search string is not unique)
+// Author Gunter Mussbacher, May-Aug2005
+// - finds the last date the given link was cleared
+// - if linkDirection equals "IN", only the backwards direction of the link is considered
+// - if linkDirection equals "OUT", only the forwards direction of the link is considered
+// - returns the last date the link was cleared or "1 Jan 1970" if link was never cleared
 */
-Date findClearDate( Object myUCMObject, Object myExternalObject, string linkDirection ) {
-	History currentHistory
+Date findClearDate( Link myLink, string linkDirection ) {
 	Date dateCleared = "1 Jan 1970"
-	string searchText
+	Date d
 
-	// create search string to be found in newValue
-	searchText = "Cleared suspect "
 	if( linkDirection == "IN" )
-		searchText = searchText "in-link from object "
+		d = myLink."Suspicion Cleared Backwards"
 	if( linkDirection == "OUT" )
-		searchText = searchText "out-link to object "
-	searchText = searchText myExternalObject."Absolute Number" " in '" fullName( module ( myExternalObject ) ) "'."
-	// find history record entry which matches search string
-	for currentHistory in myUCMObject do {
-		// in case link was never cleared, dateCleared is set to the date the object was created
-		// since this is the first entry in the history record and the for looop starts with the oldest entry, dateCleared will 
-		// be overwritten if the link was cleared at some point
-		if( currentHistory.type == createObject )
-			dateCleared = currentHistory.date
-		if( currentHistory.type == commentObject && currentHistory.newValue == searchText ) {
-			dateCleared = currentHistory.date
-print "debug: found match for object " myUCMObject."ID" "   date cleared: " dateCleared "\n"
-		}
+		d = myLink."Suspicion Cleared Forwards"
+	if( !( null d ) ) {
+		dateCleared = d
+print "debug: date cleared: " dateCleared "\n"
 	}
 	return dateCleared
 }
@@ -127,7 +110,7 @@ string compileChanges( Date cutoffDate, Object myObject ) {
 }
 
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May-Jun2005
+// Author Gunter Mussbacher, May-Aug2005
 // - generates change report for UCM objects in myModule with suspect links by compiling change information and 
 //   assigning it to the "Suspect In Links" and "Suspect Out Links" attributes
 // - assumptions for this function
@@ -155,7 +138,7 @@ bool generateModuleChangeReport( Module myModule ) {
 			for currentLink in suspectOutLinks do {
 				targetObject = target currentLink
 				// find date suspicion was cleared for link to targetObject from currentObject
-				cutoffDate = findClearDate( currentObject, targetObject, "OUT" )
+				cutoffDate = findClearDate( currentLink, "OUT" )
 				// compile history data from target object after cutoffDate
 				changes = "Object " targetObject."Absolute Number" " in '" fullName( module( targetObject ) ) "' changed.\n"
 				changes = changes compileChanges( cutoffDate, targetObject )
@@ -171,7 +154,7 @@ print "debug: compiled changes for " currentObject."ID" " (" targetObject."Absol
 			for currentLink in suspectInLinks do {
 				sourceObject = source currentLink
 				// find date suspicion was cleared for link from sourceObject to currentObject
-				cutoffDate = findClearDate( currentObject, sourceObject, "IN" )
+				cutoffDate = findClearDate( currentLink, "IN" )
 				// compile history data from source object after cutoffDate
 				changes = "Object " sourceObject."Absolute Number" " in '" fullName( module( sourceObject ) ) "' changed.\n"
 				changes = changes compileChanges( cutoffDate, sourceObject )
