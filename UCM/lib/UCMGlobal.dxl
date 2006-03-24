@@ -41,6 +41,9 @@ const string fileNameComponents = "Components"
 const string fileNameResponsibilities = "Responsibilities"
 const string fileNameMaps = "Maps"
 const string fileNameScenarios = "Scenarios"
+const string fileNameGrlDiagrams = "GRL Diagrams"
+const string fileNameActors = "Actors"
+const string fileNameIntentionalElements = "Intentional Elements"
 const string fileNameLinkDevComp = "Hosts"
 const string fileNameLinkDevResp = "Requests"
 const string fileNameLinkRefDef = "References"
@@ -85,13 +88,18 @@ endAttributeDXL()"
 
 // global variables
 // UCM folder
+//TODO rename to URN
 Folder UCMFolder
-// all UCM formal modules
+// all UCM-URN formal modules
 Module deviceModule
 Module componentModule
 Module responsibilityModule
 Module mapModule
 Module scenarioModule
+Module grlDiagramModule
+Module actorModule
+Module intentionalElementModule
+
 // all UCM link modules
 Module hostsLinkModule
 Module requestsLinkModule

@@ -92,25 +92,43 @@ bool checkDeletedUCMModules() {
 	bool checkOK = true
 
 	if ( exists module fileNameDevices ) {
-		checkOK = !( isDeleted item( fileNameDevices ) )
-		if( checkOK ) {
-			if ( exists module fileNameResponsibilities ) {
-				checkOK = !( isDeleted item( fileNameResponsibilities ) )
-				if( checkOK ) {
-					if ( exists module fileNameComponents ) {
-						checkOK = !( isDeleted item( fileNameComponents ) )
-						if( checkOK ) {
-							if ( exists module fileNameMaps ) {
-								checkOK = !( isDeleted item( fileNameMaps ) )
-								if( checkOK ) {
-									if ( exists module fileNameScenarios )
-										checkOK = !( isDeleted item( fileNameScenarios ) )
-								}
-							}
-						}
-					}
-				}
-			}
+		if (isDeleted item( fileNameDevices )){
+			checkOK = false
+		}
+	}
+	if ( exists module fileNameResponsibilities ) {
+		if (isDeleted item( fileNameResponsibilities )){
+			checkOK = false
+		}
+	}
+	if ( exists module fileNameComponents ) {
+		if (isDeleted item( fileNameComponents )){
+			checkOK = false
+		}
+	}
+	if ( exists module fileNameMaps ) {
+		if (isDeleted item( fileNameMaps )){
+			checkOK = false
+		}
+	}
+	if ( exists module fileNameScenarios ) {
+		if (isDeleted item( fileNameScenarios )){
+			checkOK = false
+		}
+	}
+	if ( exists module fileNameGrlDiagrams ) {
+		if (isDeleted item( fileNameGrlDiagrams )){
+			checkOK = false
+		}
+	}	
+	if ( exists module fileNameActors ) {
+		if (isDeleted item( fileNameActors )){
+			checkOK = false
+		}
+	}	
+	if ( exists module fileNameIntentionalElements ) {
+		if (isDeleted item( fileNameIntentionalElements )){
+			checkOK = false
 		}
 	}
 	return checkOK
@@ -212,17 +230,44 @@ bool checkCreateUCMModule( string theName ) {
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
 			createComponentViews()
 		}
+		if( theName == fileNameActors ) {
+			create object type "String" (default "No content") attribute "ID" 
+			create object type "String" (default "No content") attribute "Name_"                  
+			create object type "String" (default "") attribute "Description_"     
+			// internal attributes
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "New"
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
+			//TODO create the ActorView
+			//createActorViews()
+		}
 		if( theName == fileNameResponsibilities ) {
 			create object type "String" (default "No content") attribute "ID" 
 			create object type "String" (default "No content") attribute "Name_"          
 			create object type "String" (default "") attribute "Description_"        
-			create object type "String" (default "No content") attribute "Processor Demand" 
+
 			// internal attributes
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links" 
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "New" 
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
 			createResponsibilityViews()
+		}
+		if( theName == fileNameIntentionalElements ) {
+			create object type "String" (default "No content") attribute "ID" 
+			create object type "String" (default "No content") attribute "Name_"          
+			create object type "String" (default "") attribute "Description_"    
+			create object type "String" date false  history false changeBars false (default "") attribute "Type"
+			create object type "String" date false  history false (default "") attribute "Decomposition Type"
+     
+			// internal attributes
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "New" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
+			//TODO create the IntentionalElementView
+			//createIntentionalElementViews()
 		}
 		if( theName == fileNameMaps ) {
 			// for all
@@ -255,6 +300,27 @@ bool checkCreateUCMModule( string theName ) {
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "New" 
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
 			createMapViews()
+		}
+		if( theName == fileNameGrlDiagrams ) {
+			// for all
+			create object type "String" (default "No content") attribute "ID" 
+			create object type "String" (default "") attribute "Name_"             
+			create object type "String" (default "") attribute "Description_"       
+			create object type "String" (default "No content") attribute "Type"
+			// only used for diagrams
+			create object type "String" (default "") attribute "Diagram Title"
+			create object type "String" date false history false changeBars false (default "No content") attribute "Diagram File Name" 
+			// only used for actorRef
+			create object type "Integer" date false history false changeBars false (default "0") attribute "Width" 
+			create object type "Integer" date false history false changeBars false (default "0") attribute "Height"  
+			create object type "String" (default "") attribute "Parent Actor"       
+			// internal attributes
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links"
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "New" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
+			//TODO create the GRLDiagramView
+			//createGRLDiagramViews()
 		}
 		if( theName == fileNameScenarios ) {
 			// for all
@@ -303,14 +369,38 @@ bool checkCreateUCMModules() {
 
 	createOK = checkCreateUCMModule( fileNameDevices )
 	if( createOK ) {
-		createOK = checkCreateUCMModule( fileNameResponsibilities )
-		if( createOK ) {
-			createOK = checkCreateUCMModule( fileNameComponents )
-			if( createOK ) {
-				createOK = checkCreateUCMModule( fileNameMaps )
-				if( createOK )
-					createOK = checkCreateUCMModule( fileNameScenarios )
-			}
+		if (!checkCreateUCMModule( fileNameResponsibilities )){
+			createOK = false
+		}
+	}
+	if( createOK ) {
+		if (!checkCreateUCMModule( fileNameComponents )){
+			createOK = false
+		}
+	}
+	if( createOK ) {
+		if (!checkCreateUCMModule( fileNameMaps )){
+			createOK = false
+		}
+	}
+	if( createOK ) {
+		if (!checkCreateUCMModule( fileNameScenarios )){
+			createOK = false
+		}
+	}
+	if( createOK ) {
+		if (!checkCreateUCMModule( fileNameGrlDiagrams )){
+			createOK = false
+		}
+	}
+	if( createOK ) {
+		if (!checkCreateUCMModule( fileNameActors )){
+			createOK = false
+		}
+	}
+	if( createOK ) {
+		if (!checkCreateUCMModule( fileNameIntentionalElements )){
+			createOK = false
 		}
 	}
 	return createOK
@@ -382,12 +472,16 @@ bool openUCMModules() {
 	Module currentModule
 	bool preparationOKDevices = false, preparationOKComponents = false
 	bool preparationOKResponsibilities = false, preparationOKMaps = false, preparationOKScenarios = false
-
+	bool preparationOKGrlDiagrams = false, preparationOKActors = false, preparationOKIntentionalElements = false
+	
 	deviceModule = edit( fileNameDevices, false )
 	componentModule = edit( fileNameComponents, false )
 	responsibilityModule = edit( fileNameResponsibilities, false )
 	mapModule = edit( fileNameMaps, false )
 	scenarioModule = edit( fileNameScenarios, false )
+	grlDiagramModule = edit (fileNameGrlDiagrams, false)
+	actorModule = edit (fileNameActors, false)
+	intentionalElementModule = edit(fileNameIntentionalElements, false)
 	for currentModule in UCMFolder do {
 		if( isEdit( currentModule ) ) {
 			if( currentModule."Name" "" == fileNameDevices )
@@ -400,9 +494,16 @@ bool openUCMModules() {
 				preparationOKMaps = true
 			if( currentModule."Name" "" == fileNameScenarios )
 				preparationOKScenarios = true
+			if (currentModule."Name" "" == fileNameGrlDiagrams)
+				preparationOKGrlDiagrams = true
+			if (currentModule."Name" "" == fileNameActors)
+				preparationOKActors = true
+			if (currentModule."Name" "" == fileNameIntentionalElements)
+				preparationOKIntentionalElements = true
 		}
 	}
-	return ( preparationOKDevices && preparationOKComponents && preparationOKResponsibilities && preparationOKMaps && preparationOKScenarios )
+	return ( preparationOKDevices && preparationOKComponents && preparationOKResponsibilities && 
+				preparationOKMaps && preparationOKScenarios && preparationOKGrlDiagrams && preparationOKActors && preparationOKIntentionalElements)
 }
 
 /*************************************************************************************** 
@@ -418,7 +519,8 @@ bool checkStartedFromUCMModule( string programName ) {
 	if( !( null( current Module ) ) ) {
 		debug(name( current Module ) "\n", 2)
 		n = name( current Module )
-		if( ( n != fileNameDevices ) && ( n != fileNameComponents ) && ( n != fileNameResponsibilities ) && ( n != fileNameMaps ) && ( n != fileNameScenarios ) ) {
+		if( ( n != fileNameDevices ) && ( n != fileNameComponents ) && ( n != fileNameResponsibilities ) && ( n != fileNameMaps ) && ( n != fileNameScenarios ) &&
+				(n != fileNameGrlDiagrams) && (n != fileNameActors) && (n != fileNameIntentionalElements) ) {
 			messageBox( programName " must be started from a UCM module.\nPlease select a UCM module and start " programName " again.\n", buttons, msgError )
 			halt
 		}

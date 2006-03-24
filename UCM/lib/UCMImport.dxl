@@ -24,9 +24,10 @@ bool beginImport( string ucmDesignName ) {
 	int initOK = 1
 	string buttons1[] = { "Update", "Quit" }, buttons2[] = { "Import", "Quit" }, buttons3[] = { "Ok" }
 	debug("Start Import\n", 1)
-	debug("UCM designname: " ucmDesignName "\n",3)
+	debug("UCM designname: " ucmDesignName "\n",2)
 
 	// make sure that the UCM file is imported in the correct folder
+	//TODO fix the ucmDesignName
 	ucmDesignName = ucmDesignName ".ucm"
 	if( folder( ucmDesignName ) )
 		initOK = messageBox( "Found MATCHING UCM folder \"" ucmDesignName "\"\n\nDo you want to update the UCM modules in this folder?", buttons1, msgWarning )
@@ -140,9 +141,21 @@ bool endImport() {
 	removeDeletedObjects( scenarioModule )
 	if( countDeletedNotRemoved > 0 )
 		feedback = feedback "in " fileNameScenarios ": " countDeletedNotRemoved " object(s)\n"
+	countDeletedNotRemoved = 0
+	removeDeletedObjects( grlDiagramModule )
+	if( countDeletedNotRemoved > 0 )
+		feedback = feedback "in " fileNameGrlDiagrams ": " countDeletedNotRemoved " object(s)\n"
+	removeDeletedObjects( actorModule )
+	if( countDeletedNotRemoved > 0 )
+		feedback = feedback "in " fileNameActors ": " countDeletedNotRemoved " object(s)\n"
+	removeDeletedObjects( intentionalElementModule )
+	if( countDeletedNotRemoved > 0 )
+		feedback = feedback "in " fileNameIntentionalElements ": " countDeletedNotRemoved " object(s)\n"
+
+
 	if( feedback != "One or more objects could not be removed because of external links.\n\n" )
 		messageBox( feedback, buttons, msgWarning)
-	debug("removed all deleted objects\n", 3)
+	debug("removed all deleted objects\n", 2)
 
 	// create links in all link modules
 	createMapLinks()
