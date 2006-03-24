@@ -46,7 +46,7 @@ bool scenarioGroup( string name, string ID, string theDescription ) {
 		foundObject."Deleted" = false
 	}
 	currentScenarioGroupObject = foundObject
-print "debug: imported scenarioGroup " foundObject."ID" "\n"
+	debug("imported scenarioGroup " foundObject."ID" "\n", 3)
 	return true
 }
 
@@ -88,7 +88,7 @@ bool scenario( string name, string ID, string theDescription ) {
 	}
 	currentScenarioObject = foundObject
 	lastScenarioElementObject = foundObject
-print "debug: imported scenario " foundObject."ID" "\n"
+	debug("imported scenario " foundObject."ID" "\n", 3)
 	return true
 }
 
@@ -115,7 +115,7 @@ bool seq( string ID, string parentID ) {
 	newObject."New" = true
 	newObject."Deleted" = false 
 	lastScenarioElementObject = newObject
-print "debug: imported seq " newObject."ID" "\n"
+	debug("imported seq " newObject."ID" "\n", 3)
 	return true
 }
 
@@ -142,7 +142,7 @@ bool par( string ID, string parentID ) {
 	newObject."New" = true
 	newObject."Deleted" = false 
 	lastScenarioElementObject = newObject
-print "debug: imported par " newObject."ID" "\n"
+	debug("imported par " newObject."ID" "\n", 3)
 	return true
 }
 
@@ -209,7 +209,7 @@ bool doElement( string ID, string name, string doType, string theDescription, st
 	newObject."New" = true
 	newObject."Deleted" = false
 	lastScenarioElementObject = newObject
-print "debug: imported doElement " newObject."ID" "\n"
+	debug("imported doElement " newObject."ID" "\n", 3)
 	return true
 }
 
@@ -238,6 +238,6 @@ bool condition( string ID, string label, string expression, string parentID ) {
 	newObject."New" = true
 	newObject."Deleted" = false
 	lastScenarioElementObject = newObject
-print "debug: imported condition " newObject."ID" "\n"
+	debug("imported condition " newObject."ID" "\n", 3)
 	return true
 }

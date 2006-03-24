@@ -25,28 +25,28 @@ bool beginGenerateChangeReport() {
 	if( initOK == 1 )
 		halt
 	UCMFolder = current Folder
-print "debug: correct folder for change report\n"
+	debug("correct folder for change report\n", 3)
 
 	// open external module for reading and external link module for editing
 	if( !( openExternalModules() ) ) {
 		messageBox( "One or both external modules (\"" fileNameExternal "\", \"" fileNameLinkUCMExt "\") could not be opened for reading or editing.\nReport Change cannot proceed.\n", buttons3, msgError )
 		halt
 	}
-print "debug: opened external modules for reading/editing\n"
+	debug("opened external modules for reading/editing\n", 3)
 
 	// make sure all formal and link UCM modules are closed
 	if( !( saveCloseAllModules( UCMFolder ) ) ) {
 		messageBox( "The UCM folder still contains one or more open modules.\nReport Change cannot proceed.\nPlease close all open modules and start the import again.", buttons3, msgError )
 		halt
 	}
-print "debug: all modules closed\n"
+	debug("all modules closed\n", 3)
 
 	// open all UCM modules for editing
 	if( !( openUCMModules() ) ) {
 		messageBox( "One or more UCM modules could not be opened for editing.\nReport Change cannot proceed.\n", buttons3, msgError )
 		halt
 	}
-print "debug: opened all UCM modules for editing\n"
+	debug("opened all UCM modules for editing\n", 3)
 
 	return true
 }
@@ -63,7 +63,7 @@ bool endGenerateChangeReport() {
 		messageBox( "Report Change has finished.\n\nOne or more of the modules in the UCM folder or the external modules are still open.\nPlease manually save and close all open formal and link modules.", buttons, msgWarning)
 		halt
 	}
-print "debug: saved and closed\n"
+	debug("saved and closed\n", 3)
 	return true
 }
 
@@ -84,7 +84,7 @@ Date findClearDate( Link myLink, string linkDirection ) {
 		d = myLink."Suspicion Cleared Forwards"
 	if( !( null d ) ) {
 		dateCleared = d
-print "debug: date cleared: " dateCleared "\n"
+		debug("date cleared: " dateCleared "\n", 3)
 	}
 	return dateCleared
 }
@@ -143,7 +143,7 @@ bool generateModuleChangeReport( Module myModule ) {
 				changes = "Object " targetObject."Absolute Number" " in '" fullName( module( targetObject ) ) "' changed.\n"
 				changes = changes compileChanges( cutoffDate, targetObject )
 				allChanges = allChanges changes
-print "debug: compiled changes for " currentObject."ID" " (" targetObject."Absolute Number" " in " fullName( module( targetObject ) ) ")\n"
+				debug("compiled changes for " currentObject."ID" " (" targetObject."Absolute Number" " in " fullName( module( targetObject ) ) ")\n", 3)
 			}
 		}
 		if( allChanges == "" )
@@ -159,7 +159,7 @@ print "debug: compiled changes for " currentObject."ID" " (" targetObject."Absol
 				changes = "Object " sourceObject."Absolute Number" " in '" fullName( module( sourceObject ) ) "' changed.\n"
 				changes = changes compileChanges( cutoffDate, sourceObject )
 				allChanges = allChanges changes
-print "debug: compiled changes for " currentObject."ID" " (" sourceObject."Absolute Number" " in " fullName( module( sourceObject ) ) ")\n"
+				debug("compiled changes for " currentObject."ID" " (" sourceObject."Absolute Number" " in " fullName( module( sourceObject ) ) ")\n", 3)
 			}
 		}
 		if( allChanges == "" )
@@ -170,7 +170,7 @@ print "debug: compiled changes for " currentObject."ID" " (" sourceObject."Absol
 		delete suspectOutLinks
 		delete suspectInLinks
 	}
-print "debug: reported change\n"
+	debug("reported change\n", 3)
 	return true
 }
 

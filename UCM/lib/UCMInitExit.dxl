@@ -416,7 +416,7 @@ bool checkStartedFromUCMModule( string programName ) {
 	string n
 
 	if( !( null( current Module ) ) ) {
-print "debug: " name( current Module ) "\n"
+		debug(name( current Module ) "\n", 2)
 		n = name( current Module )
 		if( ( n != fileNameDevices ) && ( n != fileNameComponents ) && ( n != fileNameResponsibilities ) && ( n != fileNameMaps ) && ( n != fileNameScenarios ) ) {
 			messageBox( programName " must be started from a UCM module.\nPlease select a UCM module and start " programName " again.\n", buttons, msgError )

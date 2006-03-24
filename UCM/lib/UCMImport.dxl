@@ -23,7 +23,8 @@
 bool beginImport( string ucmDesignName ) {
 	int initOK = 1
 	string buttons1[] = { "Update", "Quit" }, buttons2[] = { "Import", "Quit" }, buttons3[] = { "Ok" }
-print "debug: UCM designname: " ucmDesignName "\n"
+	debug("Start Import\n", 1)
+	debug("UCM designname: " ucmDesignName "\n",3)
 
 	// make sure that the UCM file is imported in the correct folder
 	ucmDesignName = ucmDesignName ".ucm"
@@ -33,7 +34,7 @@ print "debug: UCM designname: " ucmDesignName "\n"
 		initOK = messageBox( "The selected folder does not contain a UCM folder \"" ucmDesignName "\"\n\nDo you want to continue importing a new UCM design?", buttons2, msgWarning )
 	if( initOK == 1 )
 		halt
-print "debug: correct folder\n"
+	debug("correct folder\n", 2)
 
 	// make sure the required folder exists
 	if( !( checkCreateUCMFolder( ucmDesignName, "UCM folder" ) ) ) {
@@ -41,7 +42,7 @@ print "debug: correct folder\n"
 		halt
 	}
 	current = UCMFolder
-print "debug: UCM folder exists\n"
+	debug("UCM folder exists\n", 2)
 
 	// open all external modules for reading/editing
 	if( !( openExternalModules() ) ) {
@@ -57,28 +58,28 @@ print "debug: UCM folder exists\n"
 		if( externalOK == 1 )
 			halt
 	}
-print "debug: tried to open all external modules for reading/editing\n"
+	debug("tried to open all external modules for reading/editing\n",3)
 
 	// make sure all formal and link modules are closed
 	if( !( saveCloseAllModules( UCMFolder ) ) ) {
 		messageBox( "The UCM folder still contains one or more open modules.\nImport of UCM module cannot proceed.\nPlease close all open modules and start the import again.", buttons3, msgError )
 		halt
 	}
-print "debug: all modules closed\n"
+	debug("all modules closed\n",3)
 
 	// make sure a formal module has not been deleted
 	if( !( checkDeletedUCMModules() ) ) {
 		messageBox( "One or more UCM modules have been deleted.\nImport of UCM module cannot proceed.\nPlease purge or undelete the deleted UCM modules and start the import again.", buttons3, msgError )
 		halt
 	}
-print "debug: no formal modules have been deleted\n"
+	debug("no formal modules have been deleted\n", 3)
 
 	// remove all internal link modules
 	if( !( removeUCMLinkModules() ) ) {
 		messageBox( "One or more UCM link modules could not be removed.\nImport of UCM module cannot proceed.\nPlease remove all UCM link modules and start the import again.", buttons3, msgError )
 		halt
 	}
-print "debug: removed all internal link modules\n"
+	debug("removed all internal link modules\n", 3)
 
 	// make sure all required modules exist, the objects of an existing module are set to deleted and old,
 	// generated external links are removed
@@ -86,21 +87,21 @@ print "debug: removed all internal link modules\n"
 		messageBox( "One or more UCM modules could not be created.\nImport of UCM module cannot proceed.\n", buttons3, msgError )
 		halt
 	}
-print "debug: created all modules\n"
+	debug("created all modules\n",3)
 
 	// open all modules for editing
 	if( !( openUCMModules() ) ) {
 		messageBox( "One or more UCM modules could not be opened for editing.\nImport of UCM module cannot proceed.\n", buttons3, msgError )
 		halt
 	}
-print "debug: opened all modules for editing\n"
+	debug("opened all modules for editing\n", 3)
 
 	// create all link modules
 	if( !( checkCreateUCMLinkModules() ) ) {
 		messageBox( "One or more UCM link modules could not be created.\nImport of UCM module cannot proceed.\n", buttons3, msgError )
 		halt
 	}
-print "debug: created all link modules\n"
+	debug("created all link modules\n", 3)
 
 	return true
 }
@@ -141,20 +142,20 @@ bool endImport() {
 		feedback = feedback "in " fileNameScenarios ": " countDeletedNotRemoved " object(s)\n"
 	if( feedback != "One or more objects could not be removed because of external links.\n\n" )
 		messageBox( feedback, buttons, msgWarning)
-print "debug: removed all deleted objects\n"
+	debug("removed all deleted objects\n", 3)
 
 	// create links in all link modules
 	createMapLinks()
 	createScenarioLinks()
 	createDeviceLinks()
-print "debug: created links\n"
+	debug("created links\n", 3)
 
 	// save and close all formal and link modules (external and UCM)
 	if( !( saveCloseFinal() ) ) {
 		messageBox( "The UCM import has finished.\n\nOne or more of the modules in the UCM folder or the external modules are still open.\nPlease manually save and close all open formal and link modules.", buttons, msgWarning)
 		halt
 	}
-print "debug: saved and closed\n"
+	debug("saved and closed\n", 3)
 
 	return true
 }

@@ -107,7 +107,7 @@ bool createDeviceViews() {
 
 	createCommonViews()
 	setDefaultViewForModule( current, "Device View" )  
-print "debug: created device views\n"
+	debug("created device views\n", 3)
 	return true
 }
 
@@ -148,7 +148,7 @@ bool createComponentViews() {
 
 	createCommonViews()
 	setDefaultViewForModule( current, "Component View" )           
-print "debug: created component views\n"
+	debug("created component views\n", 3)
 	return true
 }
 
@@ -186,7 +186,7 @@ bool createResponsibilityViews() {
 
 	createCommonViews()
 	setDefaultViewForModule( current, "Responsibility View" )          
-print "debug: created responsiblity views\n"
+	debug("created responsiblity views\n", 3)
 	return true
 }
 
@@ -324,7 +324,7 @@ bool createMapViews() {
 
 	createCommonViews()
 	setDefaultViewForModule( current, "UCM View" )        
-print "debug: created map views\n"
+	debug("created map views\n", 3)
 	return true
 }  
 
@@ -388,6 +388,6 @@ bool createScenarioViews() {
 
 	createCommonViews()
 	setDefaultViewForModule( current, "Scenario View" )
-print "debug: created scenario views\n"
+	debug("created scenario views\n", 3)
 	return true
 }

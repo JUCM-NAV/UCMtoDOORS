@@ -35,6 +35,6 @@ bool device( string deviceID, string deviceName, string theDescription, string s
 			foundObject."Speed Factor" = speedFactor    
 		foundObject."Deleted" = false
 	}
-print "debug: imported device " foundObject."ID" "\n"
+	debug("imported device " foundObject."ID" "\n",3)
 	return true
 }

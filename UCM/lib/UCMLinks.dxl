@@ -57,7 +57,7 @@ bool createDeviceLinks() {
 			}                  
 		}
 	}
-print "debug: created device links\n"
+	debug("created device links\n", 3)
 	return true
 }
 
@@ -122,7 +122,7 @@ bool createMapLinks() {
 			}
 		}
 	}
-print "debug: created map links\n"
+	debug("created map links\n", 3)
 	return true
 }
 
@@ -152,7 +152,7 @@ bool createScenarioLinks() {
 			}   
 		}
 	}
-print "debug: created scenario links\n"
+	debug("created scenario links\n", 3)
 	return true
 }
 

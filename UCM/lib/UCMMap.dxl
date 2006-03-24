@@ -57,7 +57,7 @@ bool map( string modelID, string modelName, string graphFileName, string title, 
 		foundObject."Deleted" = false                 
 	}
 	currentMapObject = foundObject
-print "debug: imported map " foundObject."ID" "\n"
+	debug("imported map " foundObject."ID" "\n", 3)
 	return true
 }
 
@@ -114,7 +114,7 @@ bool respRef( string hyperedgeID, int fx, int fy, string enclosingComponent, str
 			foundObject."Description_" = theDescription            
 		foundObject."Deleted" = false
 	}
-print "debug: imported respRef " foundObject."ID" "\n"
+	debug("imported respRef " foundObject."ID" "\n", 3)
 	return true
 }
 
@@ -182,7 +182,7 @@ bool compRef( string componentRefID, int fx, int fy, int width, int height, stri
 			foundObject."Parent Component" = parentComponent             
 		foundObject."Deleted" = false             
 	}
-print "debug: imported compRef " foundObject."ID" "\n"
+	debug("imported compRef " foundObject."ID" "\n", 3)
 	return true
 }
 
@@ -236,6 +236,6 @@ bool stub( string hyperedgeID, int fx, int fy, string name, string stubType, str
 			foundObject."Plugins" = submapID            
 		foundObject."Deleted" = false             
 	}
-print "debug: imported stub " foundObject."ID" "\n"
+	debug("imported stub " foundObject."ID" "\n", 3)
 	return true
 }

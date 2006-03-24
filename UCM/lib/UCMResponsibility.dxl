@@ -35,6 +35,6 @@ bool responsibility( string responsibilityID, string responsibilityName, string 
 			foundObject."Processor Demand" = processorDemand
 		foundObject."Deleted" = false
 	}
-print "debug: imported responsibility " foundObject."ID" "\n"
+	debug("imported responsibility " foundObject."ID" "\n", 3)
 	return true
 }

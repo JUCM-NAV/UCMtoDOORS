@@ -27,7 +27,7 @@ bool beginCompleteLinks() {
 	if( initOK == 1 )
 		halt
 	UCMFolder = current Folder
-print "debug: correct folder\n"
+	debug("correct folder\n", 3)
 
 	// open external module for reading and external link module for editing
 	if( !( openExternalModules() ) ) {
@@ -39,28 +39,28 @@ print "debug: correct folder\n"
 		messageBox( "The external link module (\"" fileNameLinkUCMExt "\") does not have attribute \"" attributeExternalLink "\".\nAuto Complete Links cannot proceed.\n", buttons3, msgError )
 		halt
 	}
-print "debug: opened external modules for reading/editing\n"
+	debug("opened external modules for reading/editing\n", 3)
 
 	// make sure all formal and link UCM modules are closed
 	if( !( saveCloseAllModules( UCMFolder ) ) ) {
 		messageBox( "The UCM folder still contains one or more open modules.\nAuto Complete Links cannot proceed.\nPlease close all open modules and start the import again.", buttons3, msgError )
 		halt
 	}
-print "debug: all modules closed\n"
+	debug("all modules closed\n", 3)
 
 	// open all UCM modules for editing
 	if( !( openUCMModules() ) ) {
 		messageBox( "One or more UCM modules could not be opened for editing.\nAuto Complete Links cannot proceed.\n", buttons3, msgError )
 		halt
 	}
-print "debug: opened all UCM modules for editing\n"
+	debug("opened all UCM modules for editing\n", 3)
 
 	// open all required UCM link modules for editing
 	if( !( checkCreateUCMLinkModules() ) ) {
 		messageBox( "One or more UCM link modules could not be opened for editing.\nAuto Complete Links cannot proceed.\n", buttons3, msgError )
 		halt
 	}	
-print "debug: opened all required UCM link modules for editing\n"
+	debug("opened all required UCM link modules for editing\n", 3)
 
 	return true
 }
@@ -77,7 +77,7 @@ bool endCompleteLinks() {
 		messageBox( "Auto Complete Links has finished.\n\nOne or more of the modules in the UCM folder or the external modules are still open.\nPlease manually save and close all open formal and link modules.", buttons, msgWarning)
 		halt
 	}
-print "debug: saved and closed\n"
+	debug("saved and closed\n", 3)
 	return true
 }
 
@@ -93,12 +93,12 @@ bool completeLinks() {
 	removeGeneratedLinks( responsibilityModule )
 	removeGeneratedLinks( componentModule )
 	removeGeneratedLinks( scenarioModule )
-print "debug: removed generated links\n"
+	debug("removed generated links\n",3)
 	autoCompleteMapLinks()
 	autoCompleteDefinitionLinks( responsibilityModule )
 	autoCompleteDefinitionLinks( componentModule )
 	autoCompleteScenarioLinks()
-print "debug: completed links\n"
+	debug("completed links\n",3)
 	endCompleteLinks()
 	return true
 }

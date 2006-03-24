@@ -4,6 +4,20 @@
 // - provides services for a module
 */
 
+//Global variable for the debug_level
+//From 0 (no debug) to 5 (complete debug)
+int debug_level = 5
+
+/***************************************************************************************
+// Author Jean-François Roy, March 2006
+// - Print the debug string if the debug level is less of equal to the global debug_level
+*/
+void debug( string description, int level ) {
+	if (level <= debug_level){
+		print ("debug: " description)
+	}
+}
+
 /*************************************************************************************** 
 // Author Gunter Mussbacher, May-Jun2005
 // - finds the object with a given ID in the given module

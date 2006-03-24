@@ -38,6 +38,6 @@ bool component( string componentID, string componentName, string componentType, 
 			foundObject."Device ID" = hostedDeviceID    
 		foundObject."Deleted" = false
 	}
-print "debug: imported component " foundObject."ID" "\n"
+	debug("imported component " foundObject."ID" "\n",3)
 	return true
 }
