@@ -1,0 +1,43 @@
+/*************************************************************************************** 
+// Author Jean-Francois Roy, March 2006
+// Based on UCMComponent.dxl by Gunter Mussbacher
+*/
+
+/*************************************************************************************** 
+// Author Jean-Francois Roy, March 2006
+// - imports intentional element (updates object if it exists otherwise creates new one)
+// - always returns true
+// - assumptions for this function
+//	- intentionalElementModule exists and is ready to be used
+*/
+bool intentionalelement( string elementID, string elementName, string elementType, string theDescription, string decompositionType ) {
+	Object foundObject
+
+	foundObject = findObject( elementID, intentionalElementModule )
+	if ( null foundObject ) {
+		foundObject = createNewObject( intentionalElementModule )
+		foundObject."ID" = elementID
+		foundObject."Object Heading" = elementName
+		foundObject."Name_" = elementName
+		foundObject."Type" = elementType
+		foundObject."Description_" = theDescription           
+		foundObject."Decomposition Type" = decompositionType            
+		foundObject."New" = true
+		foundObject."Deleted" = false
+	}
+	else {
+		if( foundObject."Name_" "" != elementName ) {
+			foundObject."Object Heading" = elementName
+			foundObject."Name_" = elementName    
+		}
+		if( foundObject."Type" "" != elementType )
+			foundObject."Type" = elementType    
+		if( foundObject."Description_" "" != theDescription )
+			foundObject."Description_" = theDescription    
+		if( foundObject."Decomposition Type" "" != decompositionType )
+			foundObject."Decomposition Type" = decompositionType    
+		foundObject."Deleted" = false
+	}
+	debug("imported intentional element " foundObject."ID" "\n",3)
+	return true
+}

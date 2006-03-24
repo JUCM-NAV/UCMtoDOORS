@@ -15,3 +15,6 @@
 #include "addins/UCM/lib/UCMCompleteLinks.dxl"
 #include "addins/UCM/lib/UCMImport.dxl"
 #include "addins/UCM/lib/UCMReport.dxl"
+#include "addins/UCM/lib/URNActor.dxl"
+#include "addins/UCM/lib/URNGrlDiagram.dxl"
+#include "addins/UCM/lib/URNIntentionalElement.dxl"

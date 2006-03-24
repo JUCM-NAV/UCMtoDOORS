@@ -1,0 +1,62 @@
+/*************************************************************************************** 
+// Author Jean-François Roy, March 2006
+// - Based on UCMMap.dxl by GunterMussbacher
+// - general assumptions
+//	- grlDiagramModule exists and is ready to be used
+*/
+// global variables, used only within this file
+Object currentDiagramObject
+
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May2005
+// - imports diagram (updates object if it exists otherwise creates new one)
+// - sets currentDiagramObject
+// - always returns true
+// - assumptions for this function
+//	- there are two outline levels in grlDiagramModule (the first for diagrams, the second for diagram elements)
+*/
+bool grldiagram( string modelID, string modelName, string graphFileName, string title, string theDescription ) {
+	Object foundObject, lastDiagramObject
+
+	foundObject = findObject( modelID, grlDiagramModule )
+	if ( null foundObject ) {
+		// cannot assume that the current module is grlDiagramModule, needs to be set explicitly
+		current = grlDiagramModule
+		// the picture needs to be inserted first, if another attribute is assigned before
+		// that the picture cannot be added anymore
+		if( null( last grlDiagramModule ) ) 
+			insertPictureFileAfter( graphFileName, formatBMP, null )
+		else {
+			lastDiagramObject = findAncestorOfType( "grl diagram", last grlDiagramModule )
+			insertPictureFileAfter( graphFileName, formatBMP, lastDiagramObject )
+		}
+		foundObject = last grlDiagramModule
+		foundObject."ID" = modelID
+		foundObject."Object Heading" = modelName
+		foundObject."Name_" = modelName        
+		foundObject."Type" = "grl diagram"         
+		foundObject."Diagram File Name" = graphFileName
+		foundObject."Diagram Title" = title       
+		foundObject."Description_" = theDescription       
+		foundObject."New" = true
+		foundObject."Deleted" = false
+	}
+	else {
+		if( foundObject."Name_" "" != modelName ) {
+			foundObject."Object Heading" = modelName   
+			foundObject."Name_" = modelName
+		}   
+		if( foundObject."Diagram File Name" "" != graphFileName )
+			foundObject."Diagram File Name" = graphFileName
+		if( foundObject."Diagram Title" "" != title )
+			foundObject."Diagram Title" = title   
+		if( foundObject."Description_" "" != theDescription )
+			foundObject."Description_" = theDescription               
+		// always insert the BMP file as it may have changed
+		insertPictureFile( graphFileName, formatBMP, foundObject )		
+		foundObject."Deleted" = false                 
+	}
+	currentDiagramObject = foundObject
+	debug("imported map " foundObject."ID" "\n", 3)
+	return true
+}

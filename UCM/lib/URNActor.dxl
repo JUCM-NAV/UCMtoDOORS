@@ -1,0 +1,37 @@
+/*************************************************************************************** 
+// Author Jean-Francois Roy, March 2006
+// Based on UCMComponent.dxl by Gunter Mussbacher
+*/
+
+/*************************************************************************************** 
+// Author Jean-Francois Roy, March 2006
+// - imports component (updates object if it exists otherwise creates new one)
+// - always returns true
+// - assumptions for this function
+//	- actorModule exists and is ready to be used
+*/
+bool actor( string actorID, string actorName, string theDescription ) {
+	Object foundObject
+
+	foundObject = findObject( actorID, actorModule )
+	if ( null foundObject ) {
+		foundObject = createNewObject( actorModule )
+		foundObject."ID" = actorID
+		foundObject."Object Heading" = actorName
+		foundObject."Name_" = actorName
+		foundObject."Description_" = theDescription           
+		foundObject."New" = true
+		foundObject."Deleted" = false
+	}
+	else {
+		if( foundObject."Name_" "" != actorName ) {
+			foundObject."Object Heading" = actorName
+			foundObject."Name_" = actorName    
+		} 
+		if( foundObject."Description_" "" != theDescription )
+			foundObject."Description_" = theDescription     
+		foundObject."Deleted" = false
+	}
+	debug("imported actor " foundObject."ID" "\n",3)
+	return true
+}
