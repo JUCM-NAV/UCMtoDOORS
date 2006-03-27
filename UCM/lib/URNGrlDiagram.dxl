@@ -8,7 +8,7 @@
 Object currentDiagramObject
 
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May2005
+// Author Jean-François Roy, March 2006
 // - imports diagram (updates object if it exists otherwise creates new one)
 // - sets currentDiagramObject
 // - always returns true
@@ -57,6 +57,131 @@ bool grldiagram( string modelID, string modelName, string graphFileName, string 
 		foundObject."Deleted" = false                 
 	}
 	currentDiagramObject = foundObject
-	debug("imported map " foundObject."ID" "\n", 3)
+	debug("imported diagram " foundObject."ID" "\n", 3)
+	return true
+}
+
+/*************************************************************************************** 
+// Author Jean-François Roy, March 2006
+// - imports actor reference (updates object if it exists otherwise creates new one)
+// - always returns true
+// - assumptions for this function
+//	- the dxl file is well-formed (if M is the last executed diagram and E 
+//	  is the currently executed diagram element, then E is a diagram element of M)
+*/
+bool actorRef( string actorRefID, int fx, int fy, int width, int height, string referencedActor, string name, string parentActor ) {
+	Object foundObject
+	int i
+
+	foundObject = findObject( actorRefID, grlDiagramModule )
+	if ( null foundObject ) {
+		// cannot assume that the current module is grlDiagramModule, needs to be set explicitly
+		current = grlDiagramModule
+		foundObject = create last below currentDiagramObject
+		foundObject."ID" = actorRefID
+		foundObject."Object Heading" = currentDiagramObject."Name_" "." name
+		foundObject."Name_" = name        
+		foundObject."Type" = "actorRef" 
+		foundObject."Fx" = fx         
+		foundObject."Fy" = fy      
+		foundObject."Width" = width         
+		foundObject."Height" = height         
+		foundObject."Definition ID" = referencedActor       
+		foundObject."Parent Actor" = parentActor             
+		foundObject."New" = true
+		foundObject."Deleted" = false
+	}        
+	else {
+		if( foundObject."Object Heading" "" != currentDiagramObject."Name_" "." name ) {
+			foundObject."Object Heading" = currentDiagramObject."Name_" "." name
+		}
+		if( foundObject."Name_" "" != name ) {
+			foundObject."Name_" = name
+		}
+		if( parent( foundObject ) != currentDiagramObject ) {
+			move( foundObject, below currentDiagramObject )
+		}
+		i = foundObject."Fx"
+		if( i != fx )
+			foundObject."Fx" = fx
+		i = foundObject."Fy"             
+		if( i != fy )
+			foundObject."Fy" = fy
+		i = foundObject."Width"
+		if( i != width )
+			foundObject."Width" = width
+		i = foundObject."Height"             
+		if( i != height )
+			foundObject."Height" = height            
+		if( foundObject."Definition ID" "" != referencedActor )
+			foundObject."Definition ID" = referencedActor                
+		if( foundObject."Parent Actor" "" != parentActor )
+			foundObject."Parent Actor" = parentActor             
+		foundObject."Deleted" = false             
+	}
+	debug("imported actorRef " foundObject."ID" "\n", 3)
+	return true
+}
+
+/*************************************************************************************** 
+// Author Jean-François Roy, March 2006
+// - imports intentionalElement reference (updates object if it exists otherwise creates new one)
+// - always returns true
+// - assumptions for this function
+//	- the dxl file is well-formed (if M is the last executed diagram and E 
+//	  is the currently executed diagram element, then E is a diagram element of M)
+*/
+bool intentionalElementRef( string refID, int fx, int fy, string enclosingActor, string defID, string name, string theDescription, string priority, string criticality) {
+	Object foundObject
+	int i
+
+	foundObject = findObject( refID, grlDiagramModule )
+	if ( null foundObject ) {
+		// cannot assume that the current module is grlDiagramModule, needs to be set explicitly
+		current = grlDiagramModule
+		foundObject = create last below currentDiagramObject
+		foundObject."ID" = refID
+		foundObject."Object Heading" = currentDiagramObject."Name_" "." name
+		foundObject."Name_" = name   
+		foundObject."Type" = "intentionalElementRef" 
+		foundObject."Fx" = fx
+		foundObject."Fy" = fy      
+		foundObject."Enclosing Actor" = enclosingActor                    
+		foundObject."Definition ID" = defID
+		foundObject."Description_" = theDescription 
+		foundObject."Priority" = priority
+		foundObject."Criticality" = criticality             
+		foundObject."New" = true
+		foundObject."Deleted" = false
+	}        
+	else {
+		if( foundObject."Object Heading" "" != currentDiagramObject."Name_" "." name ) {
+			foundObject."Object Heading" = currentDiagramObject."Name_" "." name
+		}
+		if( foundObject."Name_" "" != name ) {
+			foundObject."Name_" = name
+		}
+		if( parent( foundObject ) != currentDiagramObject ) {
+			move( foundObject, below currentDiagramObject )
+		}
+		i = foundObject."Fx"
+		if( i != fx )
+			foundObject."Fx" = fx
+		i = foundObject."Fy"             
+		if( i != fy )
+			foundObject."Fy" = fy
+		if( foundObject."Enclosing Actor" "" != enclosingActor )
+			foundObject."Enclosing Actor" = enclosingActor         
+		if( foundObject."Definition ID" "" != defID )
+			foundObject."Definition ID" = defID            
+		if( foundObject."Description_" "" != theDescription )
+			foundObject."Description_" = theDescription    
+		if( foundObject."Priority" "" != priority )
+			foundObject."Priority" = priority  
+		if( foundObject."Criticality" "" != criticality )
+			foundObject."Criticality" = criticality          
+		foundObject."Deleted" = false
+	}
+	debug("imported intentional element ref " foundObject."ID" "\n", 3)
 	return true
 }

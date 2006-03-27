@@ -307,13 +307,21 @@ bool checkCreateUCMModule( string theName ) {
 			create object type "String" (default "") attribute "Name_"             
 			create object type "String" (default "") attribute "Description_"       
 			create object type "String" (default "No content") attribute "Type"
+			// only used for respRef, compRef
+			create object type "Integer" date false history false changeBars false (default "0") attribute "Fx" 
+			create object type "Integer" date false history false changeBars false (default "0") attribute "Fy"
+			create object type "String" (default "No content") attribute "Definition ID" 
 			// only used for diagrams
 			create object type "String" (default "") attribute "Diagram Title"
 			create object type "String" date false history false changeBars false (default "No content") attribute "Diagram File Name" 
 			// only used for actorRef
 			create object type "Integer" date false history false changeBars false (default "0") attribute "Width" 
 			create object type "Integer" date false history false changeBars false (default "0") attribute "Height"  
-			create object type "String" (default "") attribute "Parent Actor"       
+			create object type "String" (default "") attribute "Parent Actor"    
+			// only used for intentional element ref  
+			create object type "String" (default "") attribute "Enclosing Actor"             
+			create object type "String" (default "") attribute "Priority"
+			create object type "String" (default "") attribute "Criticality"
 			// internal attributes
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links"
