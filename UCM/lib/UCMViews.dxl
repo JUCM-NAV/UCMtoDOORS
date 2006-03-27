@@ -153,6 +153,41 @@ bool createComponentViews() {
 }
 
 /*************************************************************************************** 
+// Author Jean-François Roy, March 2006
+// - creates views for actor
+// - always returns true
+// - assumptions for this function
+//	- actor module is the current module and is ready to be used
+*/
+bool createActorViews() {
+	Filter f
+
+	load view( "Standard view" )
+	delete( column 0 )
+	width( column 0, 200 )
+	insert column 0
+	attribute( column 0, "ID" )
+	width( column 0, 50 )
+	insert column 2
+	attribute( column 2, "Description_" )
+	width( column 2, 200 )     
+	insert column 3
+	attribute( column 3, "Name_" )
+	width( column 3, 100 )            
+	refresh current
+	save view( "Full Actor View" )
+
+	delete column 3
+	refresh current
+	save view( "Actor View" )
+
+	createCommonViews()
+	setDefaultViewForModule( current, "Actor View" )           
+	debug("created component views\n", 3)
+	return true
+}
+
+/*************************************************************************************** 
 // Author Gunter Mussbacher, May-Jun2005
 // - creates views for responsibilities
 // - always returns true
@@ -190,6 +225,176 @@ bool createResponsibilityViews() {
 	return true
 }
 
+/*************************************************************************************** 
+// Author Jean-François Roy, March 2006
+// - creates views for intentional element
+// - always returns true
+// - assumptions for this function
+//	- intentional element module is the current module and is ready to be used
+*/
+bool createIntentionalElementViews() {
+	Filter f
+
+	load view( "Standard view" )
+	delete( column 0 )
+	width( column 0, 150 )
+	insert column 0
+	attribute( column 0, "ID" )
+	width( column 0, 50 )
+	insert column 2
+	attribute( column 2, "Description_" )
+	width( column 2, 100 )
+	insert column 3
+	attribute( column 3, "Type" ) 
+	width( column 3, 150 )
+	insert column 4
+	attribute( column 4, "Decomposition Type" )
+	width( column 4, 100 )      
+	insert column 5         
+	attribute( column 5, "Name_" )
+	width( column 5, 100 )               
+	refresh current
+	save view( "Full Intentional Element View" )
+
+	delete column 5
+	refresh current
+	save view( "Intentional Element View" )
+
+
+	createCommonViews()
+	setDefaultViewForModule( current, "Intentional Element View" )          
+	debug("created intentional element views\n", 3)
+	return true
+}
+
+/*************************************************************************************** 
+// Author Jean-François Roy, March 2006
+// - creates views for grl diagrams
+// - always returns true
+// - assumptions for this function
+//	- grl diagram module is the current module and is ready to be used
+*/
+bool createGrlDiagramViews() {
+	Filter f
+
+	load view( "Standard view" )
+	delete( column 0 )
+	width( column 0, 150 )
+	insert column 0
+	attribute( column 0, "ID" )
+	width( column 0, 50 )
+	insert column 2
+	attribute( column 2, "Description_" )
+	width( column 2, 100 )
+	insert column 3
+	attribute( column 3, "Type" )
+	width( column 3, 50 )     
+	insert column 4
+	attribute( column 4, "Definition ID" )
+	width( column 4, 100 )
+	insert column 5
+	attribute( column 5, "Enclosing Actor" )
+	width( column 5, 50 )  
+	insert column 6
+	attribute( column 6, "Priority" )
+	width( column 6, 50 )  
+	insert column 7
+	attribute( column 7, "Criticality" )
+	width( column 7, 50 )  
+	insert column 8
+	attribute( column 8, "Author" )
+	width( column 8, 50 )	             
+	insert column 9
+	attribute( column 9, "Diagram Title" )
+	width( column 9, 100 )        
+	insert column 10
+	attribute( column 10, "Diagram File Name" )
+	width( column 10, 100 )            
+	insert column 11
+	attribute( column 11, "Parent Actor" )
+	width( column 11, 50 )             
+	insert column 12
+	attribute( column 12, "Width" )
+	width( column 12, 50 )        
+	insert column 13
+	attribute( column 13, "Height" )
+	width( column 13, 50 )        
+	insert column 14
+	attribute( column 14, "Fx" )
+	width( column 14, 50 )        
+	insert column 15
+	attribute( column 15, "Fy" )
+	width( column 15, 50 )        
+	insert column 16
+	attribute( column 16, "Name_" )
+	width( column 16, 100 )        
+	refresh current
+	save view( "Full GRL Diagram View" )
+
+	delete column 5
+	delete column 5
+	delete column 5
+	delete column 5
+	delete column 5
+	delete column 5
+	refresh current
+	save view( "Actor View" )
+
+	delete column 5
+	delete column 5
+	delete column 5
+	delete column 5
+	delete column 5
+	insert column 5
+	attribute( column 5, "Enclosing Actor" )
+	width( column 5, 50 ) 	
+	insert column 6
+	attribute( column 6, "Author" )
+	width( column 6, 50 )  
+	      
+	refresh current
+	save view( "Belief View" )
+
+	delete column 6
+	insert column 6
+	attribute( column 5, "Priority" )
+	width( column 6, 50 ) 	
+	insert column 7
+	attribute( column 7, "Criticality" )
+	width( column 7, 50 )  
+
+	delete column 4
+	delete column 4
+	delete column 4
+	insert column 4
+	attribute( column 4, "Diagram Title" )
+	width( column 4, 100 )        
+	insert column 5
+	attribute( column 5, "Diagram File Name" )
+	width( column 5, 100 )        
+	refresh current
+	save view( "Diagram View" )
+
+	delete column 4
+	delete column 4
+	delete column 4
+	insert column 4
+	attribute( column 4, "Definition ID" )
+	width( column 4, 100 )
+	insert column 5
+	attribute( column 5, "Enclosing Actor" )
+	width( column 5, 50 )             
+	insert column 6
+	attribute( column 6, "Parent Actor" )
+	width( column 6, 50 )        
+	refresh current
+	save view( "GRL Diagram View" )
+
+	createCommonViews()
+	setDefaultViewForModule( current, "GRL Diagram View" )        
+	debug("created grl diagram views\n", 3)
+	return true
+}  
 
 /*************************************************************************************** 
 // Author Gunter Mussbacher, May-Jun2005

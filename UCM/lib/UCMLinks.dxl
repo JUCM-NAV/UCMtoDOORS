@@ -62,6 +62,71 @@ bool createDeviceLinks() {
 }
 
 /*************************************************************************************** 
+// Author Jean-François Roy
+// - creates links within the grl diagram module and from the grl diagram module to the definition modules
+// - always returns true
+// - assumptions for this function
+//	- grlDiagramModule, intentionalElementModule, actorModule exist and are ready to be used
+//	- referencesLinkModule, refinesLinkModule, boundToLinkModule exist and are ready to be used
+*/
+bool createMapLinks() {
+	Object currentObject, targetObject
+	string s, p
+	int i, j
+	bool b
+
+	for currentObject in mapModule do {
+		// skip over deleted objects which could not be removed because of links
+		b = currentObject."Deleted"
+		if( !b ) {
+			if( currentObject."Type" "" == "respRef" ) {
+				// create link between respRef and responsibility module
+				targetObject = findObject( currentObject."Definition ID" "", responsibilityModule )
+				currentObject->fileNameLinkRefDef->targetObject
+				// create link between respRef and compRef in map module
+				targetObject = findObject( currentObject."Enclosing Component" "", mapModule )
+				if ( !( null targetObject ) )
+					currentObject->fileNameLinkMapComp->targetObject
+				// create link between respRef and map in map module
+				targetObject = parent( currentObject )
+				currentObject->fileNameLinkMapElem->targetObject
+			}
+			if( currentObject."Type" "" == "compRef" ) {
+				// create link between compRef and component module
+				targetObject = findObject( currentObject."Definition ID" "", componentModule )
+				if ( !( null targetObject ) )
+					currentObject->fileNameLinkRefDef->targetObject
+				// create link between compRef and parent component in map module
+				targetObject = findObject( currentObject."Parent Component" "", mapModule )
+				if ( !( null targetObject ) )
+					currentObject->fileNameLinkMapComp->targetObject
+				// create link between compRef and map in map module
+				targetObject = parent( currentObject )
+				currentObject->fileNameLinkMapElem->targetObject
+			}
+			if( currentObject."Type" "" == "stub" ) {
+				// create links between stub and plugins in the map module
+				p = currentObject."Plugins"
+				j = 0
+				for( i=0; i < length(p); i++ ) {
+					if( p[i] == ';' ) {
+						s = p[j:i-1]
+						j = i+1   
+						targetObject = findObject( s, mapModule )
+						currentObject<-fileNameLinkMapElem<-targetObject
+					}
+				}                  
+				// create link between stub and map in map module
+				targetObject=parent(currentObject)
+				currentObject->fileNameLinkMapElem->targetObject
+			}
+		}
+	}
+	debug("created map links\n", 3)
+	return true
+}
+
+/*************************************************************************************** 
 // Author Gunter Mussbacher, May-Jun2005
 // - creates links within the maps module and from the maps module to the definition modules
 // - always returns true

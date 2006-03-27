@@ -239,8 +239,7 @@ bool checkCreateUCMModule( string theName ) {
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links" 
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "New"
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
-			//TODO create the ActorView
-			//createActorViews()
+			createActorViews()
 		}
 		if( theName == fileNameResponsibilities ) {
 			create object type "String" (default "No content") attribute "ID" 
@@ -267,8 +266,7 @@ bool checkCreateUCMModule( string theName ) {
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links" 
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "New" 
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
-			//TODO create the IntentionalElementView
-			//createIntentionalElementViews()
+			createIntentionalElementViews()
 		}
 		if( theName == fileNameMaps ) {
 			// for all
@@ -331,8 +329,7 @@ bool checkCreateUCMModule( string theName ) {
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links"
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "New" 
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
-			//TODO create the GRLDiagramView
-			//createGRLDiagramViews()
+			createGrlDiagramViews()
 		}
 		if( theName == fileNameScenarios ) {
 			// for all
