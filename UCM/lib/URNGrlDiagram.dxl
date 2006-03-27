@@ -185,3 +185,60 @@ bool intentionalElementRef( string refID, int fx, int fy, string enclosingActor,
 	debug("imported intentional element ref " foundObject."ID" "\n", 3)
 	return true
 }
+
+/*************************************************************************************** 
+// Author Jean-François Roy, March 2006
+// - imports Belief (updates object if it exists otherwise creates new one)
+// - always returns true
+// - assumptions for this function
+//	- the dxl file is well-formed (if M is the last executed diagram and E 
+//	  is the currently executed diagram element, then E is a diagram element of M)
+*/
+bool belief( string id, int fx, int fy, string enclosingActor, string name, string theDescription, string author) {
+	Object foundObject
+	int i
+
+	foundObject = findObject( id, grlDiagramModule )
+	if ( null foundObject ) {
+		// cannot assume that the current module is grlDiagramModule, needs to be set explicitly
+		current = grlDiagramModule
+		foundObject = create last below currentDiagramObject
+		foundObject."ID" = id
+		foundObject."Object Heading" = currentDiagramObject."Name_" "." name
+		foundObject."Name_" = name   
+		foundObject."Type" = "belief" 
+		foundObject."Fx" = fx
+		foundObject."Fy" = fy      
+		foundObject."Enclosing Actor" = enclosingActor                    
+		foundObject."Description_" = theDescription 
+		foundObject."Author" = author           
+		foundObject."New" = true
+		foundObject."Deleted" = false
+	}        
+	else {
+		if( foundObject."Object Heading" "" != currentDiagramObject."Name_" "." name ) {
+			foundObject."Object Heading" = currentDiagramObject."Name_" "." name
+		}
+		if( foundObject."Name_" "" != name ) {
+			foundObject."Name_" = name
+		}
+		if( parent( foundObject ) != currentDiagramObject ) {
+			move( foundObject, below currentDiagramObject )
+		}
+		i = foundObject."Fx"
+		if( i != fx )
+			foundObject."Fx" = fx
+		i = foundObject."Fy"             
+		if( i != fy )
+			foundObject."Fy" = fy
+		if( foundObject."Enclosing Actor" "" != enclosingActor )
+			foundObject."Enclosing Actor" = enclosingActor                   
+		if( foundObject."Description_" "" != theDescription )
+			foundObject."Description_" = theDescription    
+		if( foundObject."Author" "" != author )
+			foundObject."Author" = author         
+		foundObject."Deleted" = false
+	}
+	debug("imported belief " foundObject."ID" "\n", 3)
+	return true
+}

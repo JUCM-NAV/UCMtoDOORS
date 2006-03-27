@@ -246,7 +246,8 @@ bool checkCreateUCMModule( string theName ) {
 			create object type "String" (default "No content") attribute "ID" 
 			create object type "String" (default "No content") attribute "Name_"          
 			create object type "String" (default "") attribute "Description_"        
-
+			create object type "String" (default "No content") attribute "Processor Demand" 
+			
 			// internal attributes
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links" 
@@ -318,10 +319,13 @@ bool checkCreateUCMModule( string theName ) {
 			create object type "Integer" date false history false changeBars false (default "0") attribute "Width" 
 			create object type "Integer" date false history false changeBars false (default "0") attribute "Height"  
 			create object type "String" (default "") attribute "Parent Actor"    
-			// only used for intentional element ref  
-			create object type "String" (default "") attribute "Enclosing Actor"             
+			// only used for intentional element ref and belief
+			create object type "String" (default "") attribute "Enclosing Actor"  
+			// only used for intentional element ref           
 			create object type "String" (default "") attribute "Priority"
 			create object type "String" (default "") attribute "Criticality"
+			// only used for belief
+			create object type "String" (default "") attribute "Author"
 			// internal attributes
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links"
