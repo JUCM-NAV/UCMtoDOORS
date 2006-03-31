@@ -530,12 +530,12 @@ bool checkStartedFromUCMModule( string programName ) {
 		n = name( current Module )
 		if( ( n != fileNameDevices ) && ( n != fileNameComponents ) && ( n != fileNameResponsibilities ) && ( n != fileNameMaps ) && ( n != fileNameScenarios ) &&
 				(n != fileNameGrlDiagrams) && (n != fileNameActors) && (n != fileNameIntentionalElements) ) {
-			messageBox( programName " must be started from a UCM module.\nPlease select a UCM module and start " programName " again.\n", buttons, msgError )
+			messageBox( programName " must be started from a URN module.\nPlease select a URN module and start " programName " again.\n", buttons, msgError )
 			halt
 		}
 	}
 	else {
-		messageBox( programName " must be started from a UCM module.\nPlease select a UCM module and start " programName " again.\n", buttons, msgError )
+		messageBox( programName " must be started from a URN module.\nPlease select a URN module and start " programName " again.\n", buttons, msgError )
 		halt
 	}
 	return true

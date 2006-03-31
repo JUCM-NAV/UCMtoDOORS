@@ -6,7 +6,7 @@
 /*************************************************************************************** 
 // Author Gunter Mussbacher, May-Jul2005
 // - prepares DOORS for auto-completion of links
-//	- makes sure the program is started from a UCM module
+//	- makes sure the program is started from a URN module
 //	- makes sure that the selected folder has not been chosen by accident (sets global variable UCMFolder)
 //	- opens all external modules for editing/reading (sets global variables
 //	  externalModule, externalLinkModule) and checks if external attribute exists
@@ -23,7 +23,7 @@ bool beginCompleteLinks() {
 
 	// make sure the the program was started from a UCM module in the correct folder
 	checkStartedFromUCMModule( "Auto Complete Links" )
-	initOK = messageBox( "Do you want to automatically complete \"" fileNameLinkUCMExt "\" links between\nUCM modules in folder \"" name( current Folder ) "\" and \"" fileNameExternal "\"?\n", buttons1, msgWarning )
+	initOK = messageBox( "Do you want to automatically complete \"" fileNameLinkUCMExt "\" links between\nURN modules in folder \"" name( current Folder ) "\" and \"" fileNameExternal "\"?\n", buttons1, msgWarning )
 	if( initOK == 1 )
 		halt
 	UCMFolder = current Folder
@@ -43,24 +43,24 @@ bool beginCompleteLinks() {
 
 	// make sure all formal and link UCM modules are closed
 	if( !( saveCloseAllModules( UCMFolder ) ) ) {
-		messageBox( "The UCM folder still contains one or more open modules.\nAuto Complete Links cannot proceed.\nPlease close all open modules and start the import again.", buttons3, msgError )
+		messageBox( "The URN folder still contains one or more open modules.\nAuto Complete Links cannot proceed.\nPlease close all open modules and start the import again.", buttons3, msgError )
 		halt
 	}
 	debug("all modules closed\n", 3)
 
 	// open all UCM modules for editing
 	if( !( openUCMModules() ) ) {
-		messageBox( "One or more UCM modules could not be opened for editing.\nAuto Complete Links cannot proceed.\n", buttons3, msgError )
+		messageBox( "One or more URN modules could not be opened for editing.\nAuto Complete Links cannot proceed.\n", buttons3, msgError )
 		halt
 	}
 	debug("opened all UCM modules for editing\n", 3)
 
 	// open all required UCM link modules for editing
 	if( !( checkCreateUCMLinkModules() ) ) {
-		messageBox( "One or more UCM link modules could not be opened for editing.\nAuto Complete Links cannot proceed.\n", buttons3, msgError )
+		messageBox( "One or more URN link modules could not be opened for editing.\nAuto Complete Links cannot proceed.\n", buttons3, msgError )
 		halt
 	}	
-	debug("opened all required UCM link modules for editing\n", 3)
+	debug("opened all required URN link modules for editing\n", 3)
 
 	return true
 }
@@ -74,7 +74,7 @@ bool endCompleteLinks() {
 	string buttons[] = { "Ok" } 
 
 	if( !( saveCloseFinal() ) ) {
-		messageBox( "Auto Complete Links has finished.\n\nOne or more of the modules in the UCM folder or the external modules are still open.\nPlease manually save and close all open formal and link modules.", buttons, msgWarning)
+		messageBox( "Auto Complete Links has finished.\n\nOne or more of the modules in the URN folder or the external modules are still open.\nPlease manually save and close all open formal and link modules.", buttons, msgWarning)
 		halt
 	}
 	debug("saved and closed\n", 3)

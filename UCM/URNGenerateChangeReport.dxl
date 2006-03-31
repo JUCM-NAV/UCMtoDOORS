@@ -1,9 +1,9 @@
-// UCMAutoCompleteLinks.dxl
+// UCMGenerateChangeReport.dxl
 
 /*************************************************************************************** 
 // Author Gunter Mussbacher, May2005
 */
-#include "addins/UCM/lib/UCMUtilities.dxl"
+#include "addins/URN/lib/URNUtilities.dxl"
 pragma runLim,0
 
-completeLinks()
+generateChangeReport()

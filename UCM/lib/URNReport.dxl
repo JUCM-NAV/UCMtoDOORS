@@ -21,7 +21,7 @@ bool beginGenerateChangeReport() {
 
 	// make sure the the program was started from a UCM module in the correct folder
 	checkStartedFromUCMModule( "Report Changes" )
-	initOK = messageBox( "Do you want to report changes in external modules\nwhich impact the UCM modules in folder \"" name( current Folder ) "\"?\n", buttons1, msgWarning )
+	initOK = messageBox( "Do you want to report changes in external modules\nwhich impact the URN modules in folder \"" name( current Folder ) "\"?\n", buttons1, msgWarning )
 	if( initOK == 1 )
 		halt
 	UCMFolder = current Folder
@@ -36,17 +36,17 @@ bool beginGenerateChangeReport() {
 
 	// make sure all formal and link UCM modules are closed
 	if( !( saveCloseAllModules( UCMFolder ) ) ) {
-		messageBox( "The UCM folder still contains one or more open modules.\nReport Change cannot proceed.\nPlease close all open modules and start the import again.", buttons3, msgError )
+		messageBox( "The URN folder still contains one or more open modules.\nReport Change cannot proceed.\nPlease close all open modules and start the import again.", buttons3, msgError )
 		halt
 	}
 	debug("all modules closed\n", 3)
 
 	// open all UCM modules for editing
 	if( !( openUCMModules() ) ) {
-		messageBox( "One or more UCM modules could not be opened for editing.\nReport Change cannot proceed.\n", buttons3, msgError )
+		messageBox( "One or more URN modules could not be opened for editing.\nReport Change cannot proceed.\n", buttons3, msgError )
 		halt
 	}
-	debug("opened all UCM modules for editing\n", 3)
+	debug("opened all URN modules for editing\n", 3)
 
 	return true
 }
@@ -60,7 +60,7 @@ bool endGenerateChangeReport() {
 	string buttons[] = { "Ok" } 
 
 	if( !( saveCloseFinal() ) ) {
-		messageBox( "Report Change has finished.\n\nOne or more of the modules in the UCM folder or the external modules are still open.\nPlease manually save and close all open formal and link modules.", buttons, msgWarning)
+		messageBox( "Report Change has finished.\n\nOne or more of the modules in the URN folder or the external modules are still open.\nPlease manually save and close all open formal and link modules.", buttons, msgWarning)
 		halt
 	}
 	debug("saved and closed\n", 3)

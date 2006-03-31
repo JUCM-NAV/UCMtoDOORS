@@ -27,19 +27,18 @@ bool beginImport( string ucmDesignName ) {
 	debug("UCM designname: " ucmDesignName "\n",2)
 
 	// make sure that the UCM file is imported in the correct folder
-	//TODO fix the ucmDesignName
-	ucmDesignName = ucmDesignName ".ucm"
+	//ucmDesignName = ucmDesignName ".ucm"
 	if( folder( ucmDesignName ) )
-		initOK = messageBox( "Found MATCHING UCM folder \"" ucmDesignName "\"\n\nDo you want to update the UCM modules in this folder?", buttons1, msgWarning )
+		initOK = messageBox( "Found MATCHING URN folder \"" ucmDesignName "\"\n\nDo you want to update the URN modules in this folder?", buttons1, msgWarning )
 	else
-		initOK = messageBox( "The selected folder does not contain a UCM folder \"" ucmDesignName "\"\n\nDo you want to continue importing a new UCM design?", buttons2, msgWarning )
+		initOK = messageBox( "The selected folder does not contain a URN folder \"" ucmDesignName "\"\n\nDo you want to continue importing a new URN design?", buttons2, msgWarning )
 	if( initOK == 1 )
 		halt
 	debug("correct folder\n", 2)
 
 	// make sure the required folder exists
 	if( !( checkCreateUCMFolder( ucmDesignName, "UCM folder" ) ) ) {
-		messageBox( "The UCM folder could not be created.\nImport of UCM module cannot proceed.\n", buttons3, msgError )
+		messageBox( "The URN folder could not be created.\nImport of URN module cannot proceed.\n", buttons3, msgError )
 		halt
 	}
 	current = UCMFolder
@@ -47,14 +46,14 @@ bool beginImport( string ucmDesignName ) {
 
 	// open all external modules for reading/editing
 	if( !( openExternalModules() ) ) {
-		externalOK = messageBox( "One or both external modules (\"" fileNameExternal "\", \"" fileNameLinkUCMExt "\") could not be opened for reading or editing.\nImport of UCM module can proceed but will not create external links.\n\nDo you want to continue with the import?", buttons2, msgWarning )
+		externalOK = messageBox( "One or both external modules (\"" fileNameExternal "\", \"" fileNameLinkUCMExt "\") could not be opened for reading or editing.\nImport of URN module can proceed but will not create external links.\n\nDo you want to continue with the import?", buttons2, msgWarning )
 	}
 	if( externalOK == 1 )
 		halt
 	// check if the external attribute exists (only needs to be performed if auto-completion of links can be done)
 	if( externalOK == 2 ) {
 		if( !( checkExternalAttribute( externalLinkModule, attributeExternalLink ) ) ) {
-			externalOK = messageBox( "The external link module (\"" fileNameLinkUCMExt "\") does not have attribute \"" attributeExternalLink "\".\nImport of UCM module can proceed but will not create external links.\n\nDo you want to continue with the import?", buttons2, msgWarning )
+			externalOK = messageBox( "The external link module (\"" fileNameLinkUCMExt "\") does not have attribute \"" attributeExternalLink "\".\nImport of URN module can proceed but will not create external links.\n\nDo you want to continue with the import?", buttons2, msgWarning )
 		}
 		if( externalOK == 1 )
 			halt
@@ -63,21 +62,21 @@ bool beginImport( string ucmDesignName ) {
 
 	// make sure all formal and link modules are closed
 	if( !( saveCloseAllModules( UCMFolder ) ) ) {
-		messageBox( "The UCM folder still contains one or more open modules.\nImport of UCM module cannot proceed.\nPlease close all open modules and start the import again.", buttons3, msgError )
+		messageBox( "The URN folder still contains one or more open modules.\nImport of URN module cannot proceed.\nPlease close all open modules and start the import again.", buttons3, msgError )
 		halt
 	}
 	debug("all modules closed\n",3)
 
 	// make sure a formal module has not been deleted
 	if( !( checkDeletedUCMModules() ) ) {
-		messageBox( "One or more UCM modules have been deleted.\nImport of UCM module cannot proceed.\nPlease purge or undelete the deleted UCM modules and start the import again.", buttons3, msgError )
+		messageBox( "One or more URN modules have been deleted.\nImport of URN module cannot proceed.\nPlease purge or undelete the deleted URN modules and start the import again.", buttons3, msgError )
 		halt
 	}
 	debug("no formal modules have been deleted\n", 3)
 
 	// remove all internal link modules
 	if( !( removeUCMLinkModules() ) ) {
-		messageBox( "One or more UCM link modules could not be removed.\nImport of UCM module cannot proceed.\nPlease remove all UCM link modules and start the import again.", buttons3, msgError )
+		messageBox( "One or more URN link modules could not be removed.\nImport of URN module cannot proceed.\nPlease remove all URN link modules and start the import again.", buttons3, msgError )
 		halt
 	}
 	debug("removed all internal link modules\n", 3)
@@ -85,21 +84,21 @@ bool beginImport( string ucmDesignName ) {
 	// make sure all required modules exist, the objects of an existing module are set to deleted and old,
 	// generated external links are removed
 	if( !( checkCreateUCMModules() ) ) {
-		messageBox( "One or more UCM modules could not be created.\nImport of UCM module cannot proceed.\n", buttons3, msgError )
+		messageBox( "One or more URN modules could not be created.\nImport of URN module cannot proceed.\n", buttons3, msgError )
 		halt
 	}
 	debug("created all modules\n",3)
 
 	// open all modules for editing
 	if( !( openUCMModules() ) ) {
-		messageBox( "One or more UCM modules could not be opened for editing.\nImport of UCM module cannot proceed.\n", buttons3, msgError )
+		messageBox( "One or more URN modules could not be opened for editing.\nImport of URN module cannot proceed.\n", buttons3, msgError )
 		halt
 	}
 	debug("opened all modules for editing\n", 3)
 
 	// create all link modules
 	if( !( checkCreateUCMLinkModules() ) ) {
-		messageBox( "One or more UCM link modules could not be created.\nImport of UCM module cannot proceed.\n", buttons3, msgError )
+		messageBox( "One or more URN link modules could not be created.\nImport of URN module cannot proceed.\n", buttons3, msgError )
 		halt
 	}
 	debug("created all link modules\n", 3)
@@ -165,7 +164,7 @@ bool endImport() {
 
 	// save and close all formal and link modules (external and UCM)
 	if( !( saveCloseFinal() ) ) {
-		messageBox( "The UCM import has finished.\n\nOne or more of the modules in the UCM folder or the external modules are still open.\nPlease manually save and close all open formal and link modules.", buttons, msgWarning)
+		messageBox( "The URN import has finished.\n\nOne or more of the modules in the URN folder or the external modules are still open.\nPlease manually save and close all open formal and link modules.", buttons, msgWarning)
 		halt
 	}
 	debug("saved and closed\n", 3)

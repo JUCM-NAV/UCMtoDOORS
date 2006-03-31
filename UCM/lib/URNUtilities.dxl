@@ -1,0 +1,20 @@
+/*************************************************************************************** 
+// Author Gunter Mussbacher, May-Jun2005
+// - Based on initial version by Bo Jiang
+*/
+#include "addins/URN/lib/URNGlobal.dxl"
+#include "addins/URN/lib/URNModuleUtilities.dxl"
+#include "addins/URN/lib/URNViews.dxl"
+#include "addins/URN/lib/URNInitExit.dxl"
+#include "addins/URN/lib/URNDevice.dxl"
+#include "addins/URN/lib/URNComponent.dxl"
+#include "addins/URN/lib/URNResponsibility.dxl"
+#include "addins/URN/lib/URNMap.dxl"
+#include "addins/URN/lib/URNScenario.dxl"
+#include "addins/URN/lib/URNLinks.dxl"
+#include "addins/URN/lib/URNCompleteLinks.dxl"
+#include "addins/URN/lib/URNImport.dxl"
+#include "addins/URN/lib/URNReport.dxl"
+#include "addins/URN/lib/URNActor.dxl"
+#include "addins/URN/lib/URNGrlDiagram.dxl"
+#include "addins/URN/lib/URNIntentionalElement.dxl"
