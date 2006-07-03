@@ -17,6 +17,7 @@
 //	  referencesLinkModule, refinesLinkModule, boundtoLinkModule, tracedByLinkModule, rationaleLinkModule)
 // - halts if an error occurs or the user chooses "Quit", otherwise returns true
 */
+//TODO Modified autocomplete links to include GRL diagrams and links
 bool beginCompleteLinks() {
 	int initOK = 1
 	string buttons1[] = { "Complete", "Quit" }, buttons3[] = { "Ok" } 

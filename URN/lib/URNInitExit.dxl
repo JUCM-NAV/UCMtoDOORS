@@ -131,6 +131,12 @@ bool checkDeletedUCMModules() {
 			checkOK = false
 		}
 	}
+	
+	if ( exists module fileNameIntentionalElementLinks ) {
+		if (isDeleted item( fileNameIntentionalElementLinks )){
+			checkOK = false
+		}
+	}
 	return checkOK
 }
 
@@ -272,6 +278,26 @@ bool checkCreateUCMModule( string theName ) {
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
 			createIntentionalElementViews()
 		}
+		if( theName == fileNameIntentionalElementLinks ) {
+			create object type "String" (default "No content") attribute "ID" 
+			create object type "String" (default "No content") attribute "Name_"  
+			create object type "String" (default "") attribute "Description_"    
+			create object type "String" date false  history false changeBars false (default "") attribute "Type"
+			//Two next are only for contribution
+			create object type "String" (default "") attribute "Contribution Type"
+			create object type "String" date false  history false changeBars false (default "") attribute "Correlation"
+			
+			create object type "String" (default "No content") attribute "source ID" 
+			create object type "String" (default "No content") attribute "destination ID" 
+						     
+			// internal attributes
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "New" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
+			createIntentionalElementLinksViews()
+		}
+		
 		if( theName == fileNameMaps ) {
 			// for all
 			create object type "String" (default "No content") attribute "ID" 
@@ -329,6 +355,10 @@ bool checkCreateUCMModule( string theName ) {
 			// only used for belief
 			create object type "String" (default "") attribute "Author"
 			create object type "String" (default "") attribute "Intentional Element ID"
+			// only used for LinkRef
+			create object type "String" (default "") attribute "Source ID"
+			create object type "String" (default "") attribute "Destination ID"
+			create object type "String" (default "") attribute "Link ID"
 			// internal attributes
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links"
@@ -417,6 +447,11 @@ bool checkCreateUCMModules() {
 			createOK = false
 		}
 	}
+	if( createOK ) {
+		if (!checkCreateUCMModule( fileNameIntentionalElementLinks )){
+			createOK = false
+		}
+	}
 	return createOK
 }
 
@@ -493,6 +528,7 @@ bool openUCMModules() {
 	bool preparationOKDevices = false, preparationOKComponents = false
 	bool preparationOKResponsibilities = false, preparationOKMaps = false, preparationOKScenarios = false
 	bool preparationOKGrlDiagrams = false, preparationOKActors = false, preparationOKIntentionalElements = false
+	bool preparationOKElementLinks = false
 	
 	deviceModule = edit( fileNameDevices, false )
 	componentModule = edit( fileNameComponents, false )
@@ -502,6 +538,8 @@ bool openUCMModules() {
 	grlDiagramModule = edit (fileNameGrlDiagrams, false)
 	actorModule = edit (fileNameActors, false)
 	intentionalElementModule = edit(fileNameIntentionalElements, false)
+	intentionalElementLinksModule = edit(fileNameIntentionalElementLinks, false)
+	
 	for currentModule in UCMFolder do {
 		if( isEdit( currentModule ) ) {
 			if( currentModule."Name" "" == fileNameDevices )
@@ -520,10 +558,13 @@ bool openUCMModules() {
 				preparationOKActors = true
 			if (currentModule."Name" "" == fileNameIntentionalElements)
 				preparationOKIntentionalElements = true
+			if (currentModule."Name" "" == fileNameIntentionalElementLinks)
+				preparationOKElementLinks = true
 		}
 	}
 	return ( preparationOKDevices && preparationOKComponents && preparationOKResponsibilities && 
-				preparationOKMaps && preparationOKScenarios && preparationOKGrlDiagrams && preparationOKActors && preparationOKIntentionalElements)
+				preparationOKMaps && preparationOKScenarios && preparationOKGrlDiagrams && preparationOKActors && preparationOKIntentionalElements &&
+				preparationOKElementLinks)
 }
 
 /*************************************************************************************** 
@@ -540,7 +581,7 @@ bool checkStartedFromUCMModule( string programName ) {
 		debug(name( current Module ) "\n", 2)
 		n = name( current Module )
 		if( ( n != fileNameDevices ) && ( n != fileNameComponents ) && ( n != fileNameResponsibilities ) && ( n != fileNameMaps ) && ( n != fileNameScenarios ) &&
-				(n != fileNameGrlDiagrams) && (n != fileNameActors) && (n != fileNameIntentionalElements) ) {
+				(n != fileNameGrlDiagrams) && (n != fileNameActors) && (n != fileNameIntentionalElements) && (n != fileNameIntentionalElementLinks) ) {
 			messageBox( programName " must be started from a URN module.\nPlease select a URN module and start " programName " again.\n", buttons, msgError )
 			halt
 		}

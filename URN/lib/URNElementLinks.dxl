@@ -1,0 +1,95 @@
+/*************************************************************************************** 
+// Author Jean-Francois Roy, July 2006
+*/
+
+/*************************************************************************************** 
+// Author Jean-Francois Roy, July 2006
+// - import ElementLinks from GRL model (decompositions and dependencies)
+// -(updates object if it exists otherwise creates new one)
+// - always returns true
+// - assumptions for this function
+// - intentionalElementLinksModule exists and is ready to be used
+*/
+bool elementlink( string elementID, string elementName, string elementType, string theDescription, string sourceID, string destinationID ) {
+	Object foundObject
+
+	foundObject = findObject( elementID, intentionalElementLinksModule )
+	if ( null foundObject ) {
+		foundObject = createNewObject( intentionalElementLinksModule )
+		foundObject."ID" = elementID
+		foundObject."Object Heading" = elementName
+		foundObject."Name_" = elementName
+		foundObject."Type" = elementType
+		foundObject."Description_" = theDescription           
+		foundObject."Source ID" = sourceID
+		foundObject."Destination ID" = destinationID            
+		foundObject."New" = true
+		foundObject."Deleted" = false
+	}
+	else {
+		if( foundObject."Name_" "" != elementName ) {
+			foundObject."Object Heading" = elementName
+			foundObject."Name_" = elementName    
+		}
+		if( foundObject."Type" "" != elementType )
+			foundObject."Type" = elementType    	
+		if( foundObject."Description_" "" != theDescription )
+			foundObject."Description_" = theDescription    
+		if( foundObject."Source ID" "" != sourceID )
+			foundObject."Source ID" = sourceID   
+		if( foundObject."Destination ID" "" != destinationID )
+			foundObject."Destination ID" = destinationID   
+		foundObject."Deleted" = false
+	}
+	debug("imported element link (decomposition or dependency) " foundObject."ID" "\n",3)
+	return true
+}
+
+/*************************************************************************************** 
+// Author Jean-Francois Roy, July 2006
+// - import ElementLinks from GRL model (contributions)
+// -(updates object if it exists otherwise creates new one)
+// - always returns true
+// - assumptions for this function
+// - intentionalElementLinksModule exists and is ready to be used
+*/
+bool contribution( string elementID, string elementName, string elementType, string contributionType, string correlation, string theDescription, string sourceID, string destinationID ) {
+	Object foundObject
+
+	foundObject = findObject( elementID, intentionalElementLinksModule )
+	if ( null foundObject ) {
+		foundObject = createNewObject( intentionalElementLinksModule )
+		foundObject."ID" = elementID
+		foundObject."Object Heading" = elementName
+		foundObject."Name_" = elementName
+		foundObject."Type" = elementType         
+		foundObject."Contribution Type" = contributionType
+		foundObject."Correlation" = correlation
+		foundObject."Description_" = theDescription  
+		foundObject."Source ID" = sourceID
+		foundObject."Destination ID" = destinationID            
+		foundObject."New" = true
+		foundObject."Deleted" = false
+	}
+	else {
+		if( foundObject."Name_" "" != elementName ) {
+			foundObject."Object Heading" = elementName
+			foundObject."Name_" = elementName    
+		}
+		if( foundObject."Type" "" != elementType )
+			foundObject."Type" = elementType    	 
+		if (foundObject."Contribution Type" "" != contributionType)
+			foundObject."Contribution Type" = contributionType 
+		if (foundObject."Correlation" "" != correlation)
+			foundObject."Correlation" = correlation 
+		if( foundObject."Description_" "" != theDescription )
+			foundObject."Description_" = theDescription    
+		if( foundObject."Source ID" "" != sourceID )
+			foundObject."Source ID" = sourceID   
+		if( foundObject."Destination ID" "" != destinationID )
+			foundObject."Destination ID" = destinationID   
+		foundObject."Deleted" = false
+	}
+	debug("imported contribution (contribution) " foundObject."ID" "\n",3)
+	return true
+}

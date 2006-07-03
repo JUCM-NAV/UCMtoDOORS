@@ -150,6 +150,10 @@ bool endImport() {
 	removeDeletedObjects( intentionalElementModule )
 	if( countDeletedNotRemoved > 0 )
 		feedback = feedback "in " fileNameIntentionalElements ": " countDeletedNotRemoved " object(s)\n"
+	
+	removeDeletedObjects( intentionalElementLinksModule )
+	if( countDeletedNotRemoved > 0 )
+		feedback = feedback "in " fileNameIntentionalElementLinks ": " countDeletedNotRemoved " object(s)\n"
 
 
 	if( feedback != "One or more objects could not be removed because of external links.\n\n" )
