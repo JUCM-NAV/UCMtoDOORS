@@ -168,8 +168,12 @@ bool removeUCMLinkModules() {
 				removeOK = removeModule( fileNameLinkMapElem )
 				if( removeOK ) {
 					removeOK = removeModule( fileNameLinkMapComp )
-					if( removeOK )
+					if( removeOK ){
 						removeOK = removeModule( fileNameLinkMapScen )
+						if (removeOK){
+							removeOK = removeModule( fileNameLinkBeliefElem)
+						}
+					}
 				}
 			}
 		}
@@ -324,6 +328,7 @@ bool checkCreateUCMModule( string theName ) {
 			create object type "String" (default "") attribute "Criticality"
 			// only used for belief
 			create object type "String" (default "") attribute "Author"
+			create object type "String" (default "") attribute "Intentional Element ID"
 			// internal attributes
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links"
@@ -424,7 +429,7 @@ bool checkCreateUCMModules() {
 */
 bool checkCreateUCMLinkModules() {
 	Module currentModule
-	bool hostsOK = false, requestsOK = false, referencesOK = false, refinesOK = false, boundToOK = false, tracedByOK = false
+	bool hostsOK = false, requestsOK = false, referencesOK = false, refinesOK = false, boundToOK = false, tracedByOK = false, rationaleByOK = false
 
 	if ( !( exists module fileNameLinkDevComp ) ) {
 		create( fileNameLinkDevComp, "devices host components", manyToMany, false )
@@ -451,6 +456,10 @@ bool checkCreateUCMLinkModules() {
 		create( fileNameLinkMapScen, "responsibilities and components are traced by scenarios", manyToMany, false )
 	}
 	tracedbyLinkModule = edit( fileNameLinkMapScen, false )
+	if ( !( exists module fileNameLinkBeliefElem) ){
+		create( fileNameLinkBeliefElem, "beliefs are rationales of intentional element references", manyToMany, false )
+	}
+	rationaleLinkModule = edit( fileNameLinkBeliefElem, false )
 	for currentModule in current Folder do {
 		if( isEdit( currentModule ) ) {
 			if( currentModule."Name" "" == fileNameLinkDevComp )
@@ -465,9 +474,11 @@ bool checkCreateUCMLinkModules() {
 				boundToOK = true
 			if( currentModule."Name" "" == fileNameLinkMapScen )
 				tracedByOK = true
+			if( currentModule."Name" "" == fileNameLinkBeliefElem )
+				rationaleByOK = true
 		}
 	}
-	return ( hostsOK && requestsOK && referencesOK && refinesOK && boundToOK && tracedByOK )
+	return ( hostsOK && requestsOK && referencesOK && refinesOK && boundToOK && tracedByOK && rationaleByOK)
 }
 
 /*************************************************************************************** 

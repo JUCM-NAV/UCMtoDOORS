@@ -50,6 +50,7 @@ const string fileNameLinkRefDef = "References"
 const string fileNameLinkMapElem = "Refines"
 const string fileNameLinkMapScen = "Traced By"
 const string fileNameLinkMapComp = "Bound To"
+const string fileNameLinkBeliefElem = "Rationales"
 const string attributeExternalLink = "Generated"
 const string attributeExternalModule = "Common"
 
@@ -107,6 +108,7 @@ Module referencesLinkModule
 Module refinesLinkModule
 Module boundtoLinkModule
 Module tracedByLinkModule
+Module rationaleLinkModule
 // all external modules
 Module externalModule
 Module externalLinkModule

@@ -14,7 +14,7 @@
 //	- opens all formal modules for editing (sets global variables deviceModule, componentModule, 
 //	  responsibilityModule, mapModule, scenarioModule)
 //	- opens all link modules for editing (sets global variables hostsLinkModule, requestsLinkModule,
-//	  referencesLinkModule, refinesLinkModule, boundtoLinkModule, tracedByLinkModule)
+//	  referencesLinkModule, refinesLinkModule, boundtoLinkModule, tracedByLinkModule, rationaleLinkModule)
 // - halts if an error occurs or the user chooses "Quit", otherwise returns true
 */
 bool beginCompleteLinks() {

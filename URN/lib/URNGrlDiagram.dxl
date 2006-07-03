@@ -194,7 +194,7 @@ bool intentionalElementRef( string refID, int fx, int fy, string enclosingActor,
 //	- the dxl file is well-formed (if M is the last executed diagram and E 
 //	  is the currently executed diagram element, then E is a diagram element of M)
 */
-bool belief( string id, int fx, int fy, string enclosingActor, string name, string theDescription, string author) {
+bool belief( string id, int fx, int fy, string enclosingActor, string linkElementId, string name, string theDescription, string author) {
 	Object foundObject
 	int i
 
@@ -209,7 +209,8 @@ bool belief( string id, int fx, int fy, string enclosingActor, string name, stri
 		foundObject."Type" = "belief" 
 		foundObject."Fx" = fx
 		foundObject."Fy" = fy      
-		foundObject."Enclosing Actor" = enclosingActor                    
+		foundObject."Enclosing Actor" = enclosingActor 
+		foundObject."Intentional Element ID" = linkElementId                   
 		foundObject."Description_" = theDescription 
 		foundObject."Author" = author           
 		foundObject."New" = true
@@ -233,6 +234,8 @@ bool belief( string id, int fx, int fy, string enclosingActor, string name, stri
 			foundObject."Fy" = fy
 		if( foundObject."Enclosing Actor" "" != enclosingActor )
 			foundObject."Enclosing Actor" = enclosingActor                   
+		if( foundObject."Intentional Element ID" "" != linkElementId )
+			foundObject."Intentional Element ID" = linkElementId
 		if( foundObject."Description_" "" != theDescription )
 			foundObject."Description_" = theDescription    
 		if( foundObject."Author" "" != author )

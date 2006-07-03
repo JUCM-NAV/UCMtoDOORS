@@ -303,34 +303,38 @@ bool createGrlDiagramViews() {
 	width( column 7, 50 )  
 	insert column 8
 	attribute( column 8, "Author" )
-	width( column 8, 50 )	             
+	width( column 8, 50 )	
 	insert column 9
-	attribute( column 9, "Diagram Title" )
-	width( column 9, 100 )        
+	attribute( column 9, "Intentional Element ID" )
+	width( column 9, 50 )	             
 	insert column 10
-	attribute( column 10, "Diagram File Name" )
-	width( column 10, 100 )            
+	attribute( column 10, "Diagram Title" )
+	width( column 10, 100 )        
 	insert column 11
-	attribute( column 11, "Parent Actor" )
-	width( column 11, 50 )             
+	attribute( column 11, "Diagram File Name" )
+	width( column 11, 100 )            
 	insert column 12
-	attribute( column 12, "Width" )
-	width( column 12, 50 )        
+	attribute( column 12, "Parent Actor" )
+	width( column 12, 50 )             
 	insert column 13
-	attribute( column 13, "Height" )
+	attribute( column 13, "Width" )
 	width( column 13, 50 )        
 	insert column 14
-	attribute( column 14, "Fx" )
+	attribute( column 14, "Height" )
 	width( column 14, 50 )        
 	insert column 15
-	attribute( column 15, "Fy" )
+	attribute( column 15, "Fx" )
 	width( column 15, 50 )        
 	insert column 16
-	attribute( column 16, "Name_" )
-	width( column 16, 100 )        
+	attribute( column 16, "Fy" )
+	width( column 16, 50 )        
+	insert column 17
+	attribute( column 17, "Name_" )
+	width( column 17, 100 )        
 	refresh current
 	save view( "Full GRL Diagram View" )
 
+	delete column 5
 	delete column 5
 	delete column 5
 	delete column 5
@@ -351,13 +355,17 @@ bool createGrlDiagramViews() {
 	insert column 6
 	attribute( column 6, "Author" )
 	width( column 6, 50 )  
-	      
+	insert column 7
+	attribute( column 7, "Intentional Element ID" )
+	width( column 7, 50 )  
+	      	      
 	refresh current
 	save view( "Belief View" )
 
 	delete column 6
+	delete column 6
 	insert column 6
-	attribute( column 5, "Priority" )
+	attribute( column 6, "Priority" )
 	width( column 6, 50 ) 	
 	insert column 7
 	attribute( column 7, "Criticality" )

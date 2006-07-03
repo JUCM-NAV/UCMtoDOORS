@@ -69,60 +69,57 @@ bool createDeviceLinks() {
 //	- grlDiagramModule, intentionalElementModule, actorModule exist and are ready to be used
 //	- referencesLinkModule, refinesLinkModule, boundToLinkModule exist and are ready to be used
 */
-bool createMapLinks() {
+bool createGrlDiagramLinks() {
 	Object currentObject, targetObject
 	string s, p
 	int i, j
 	bool b
 
-	for currentObject in mapModule do {
+	for currentObject in grlDiagramModule do {
 		// skip over deleted objects which could not be removed because of links
 		b = currentObject."Deleted"
 		if( !b ) {
-			if( currentObject."Type" "" == "respRef" ) {
-				// create link between respRef and responsibility module
-				targetObject = findObject( currentObject."Definition ID" "", responsibilityModule )
+			if( currentObject."Type" "" == "intentionalElementRef" ) {
+				// create link between IntentionalElementRef and Intentional Elements module
+				targetObject = findObject( currentObject."Definition ID" "", intentionalElementModule )
 				currentObject->fileNameLinkRefDef->targetObject
-				// create link between respRef and compRef in map module
-				targetObject = findObject( currentObject."Enclosing Component" "", mapModule )
+				// create link between intentionalElementRef and actorRef in grl module
+				targetObject = findObject( currentObject."Enclosing Actor" "", grlDiagramModule )
 				if ( !( null targetObject ) )
 					currentObject->fileNameLinkMapComp->targetObject
-				// create link between respRef and map in map module
+				// create link between intentionalElementRef and grl diagram in grlDiagram module
 				targetObject = parent( currentObject )
 				currentObject->fileNameLinkMapElem->targetObject
 			}
-			if( currentObject."Type" "" == "compRef" ) {
-				// create link between compRef and component module
-				targetObject = findObject( currentObject."Definition ID" "", componentModule )
+			if( currentObject."Type" "" == "actorRef" ) {
+				// create link between actorRef and actor module
+				targetObject = findObject( currentObject."Definition ID" "", actorModule )
 				if ( !( null targetObject ) )
 					currentObject->fileNameLinkRefDef->targetObject
-				// create link between compRef and parent component in map module
-				targetObject = findObject( currentObject."Parent Component" "", mapModule )
+				// create link between actorRef and parent actor in grl diagram module
+				targetObject = findObject( currentObject."Parent Actor" "", grlDiagramModule )
 				if ( !( null targetObject ) )
 					currentObject->fileNameLinkMapComp->targetObject
-				// create link between compRef and map in map module
+				// create link between actorRef and grlDiagram in grl diagram module
 				targetObject = parent( currentObject )
 				currentObject->fileNameLinkMapElem->targetObject
 			}
-			if( currentObject."Type" "" == "stub" ) {
-				// create links between stub and plugins in the map module
-				p = currentObject."Plugins"
-				j = 0
-				for( i=0; i < length(p); i++ ) {
-					if( p[i] == ';' ) {
-						s = p[j:i-1]
-						j = i+1   
-						targetObject = findObject( s, mapModule )
-						currentObject<-fileNameLinkMapElem<-targetObject
-					}
-				}                  
-				// create link between stub and map in map module
-				targetObject=parent(currentObject)
+			if( currentObject."Type" "" == "belief" ) {
+				// create link between belief and actorRef in grl diagram module
+				targetObject = findObject( currentObject."Enclosing Actor" "", grlDiagramModule )
+				if ( !( null targetObject ) )
+					currentObject->fileNameLinkMapComp->targetObject
+				// create link between belief and intentional elemetn ref in grl diagram module
+				targetObject = findObject( currentObject."Intentional Element ID" "", grlDiagramModule)
+				if ( !( null targetObject ) )
+					currentObject->fileNameLinkBeliefElem->targetObject
+				// create link between belief and grlDiagram in grl diagram module
+				targetObject = parent( currentObject )
 				currentObject->fileNameLinkMapElem->targetObject
 			}
 		}
 	}
-	debug("created map links\n", 3)
+	debug("created grlDiagram links\n", 3)
 	return true
 }
 
