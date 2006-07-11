@@ -1,0 +1,34 @@
+/*************************************************************************************** 
+// Author Jean-Francois Roy, July 2006
+*/
+
+/*************************************************************************************** 
+// Author Jean-Francois Roy, July 2006
+// - imports urn links (updates object if it exists otherwise creates new one)
+// - always returns true
+// - assumptions for this function
+// - urnLinks exists and is ready to be used
+*/
+bool urnlink( string sourceID, string destinationID){
+	Object sourceObject, destinationObject
+	string s, p
+	int i, j
+	bool b
+
+	sourceObject = findObject( sourceID, intentionalElementModule )
+	if ( null sourceObject){
+		sourceObject = findObject( sourceID, actorModule )
+	}
+	destinationObject = findObject( destinationID, mapModule )
+	if ( null destinationObject) {
+		destinationObject = findObject( destinationID, responsibilityModule )
+		if ( null destinationObject)
+			destinationObject = findObject( destinationID, componentModule )
+	}
+	if ( (!(null sourceObject)) && (!(null destinationObject)) ) {
+		sourceObject->fileNameLinkUrnLink->destinationObject
+		
+	}
+	debug("created urn link\n", 3)
+	return true
+}

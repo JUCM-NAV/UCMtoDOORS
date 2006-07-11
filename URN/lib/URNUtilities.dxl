@@ -18,4 +18,6 @@
 #include "addins/URN/lib/URNActor.dxl"
 #include "addins/URN/lib/URNGrlDiagram.dxl"
 #include "addins/URN/lib/URNIntentionalElement.dxl"
-#include "addins/URN/lib/URNElementLinks.dxl"
+#include "addins/URN/lib/URNElementLink.dxl"
+#include "addins/URN/lib/URNUrnlink.dxl"
+#include "addins/URN/lib/URNStrategy.dxl"

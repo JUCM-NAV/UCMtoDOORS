@@ -83,6 +83,7 @@ bool createCommonViews() {
 //	- device module is the current module and is ready to be used
 */
 bool createDeviceViews() {
+	
 	load view( "Standard view" )
 	delete( column 0 )
 	width( column 0, 150 )
@@ -183,7 +184,7 @@ bool createActorViews() {
 
 	createCommonViews()
 	setDefaultViewForModule( current, "Actor View" )           
-	debug("created component views\n", 3)
+	debug("created actors views\n", 3)
 	return true
 }
 
@@ -274,7 +275,7 @@ bool createIntentionalElementViews() {
 // - assumptions for this function
 //	- intentional element links module is the current module and is ready to be used
 */
-bool createIntentionalElementLinksViews() {
+bool createIntentionalElementAssociationsViews() {
 	Filter f
 
 	load view( "Standard view" )
@@ -284,35 +285,41 @@ bool createIntentionalElementLinksViews() {
 	attribute( column 0, "ID" )
 	width( column 0, 50 )
 	insert column 2
-	attribute( column 2, "Description_" )
-	width( column 2, 100 )
+	attribute( column 2, "Source ID" )
+	width( column 2, 50 )
+	insert column 2
+	attribute( column 3, "Destination ID" )
+	width( column 3, 50 )
 	insert column 3
-	attribute( column 3, "Type" ) 
-	width( column 3, 150 )
+	attribute( column 4, "Description_" )
+	width( column 4, 100 )
 	insert column 4
-	attribute( column 4, "Contribution Type" )
-	width( column 4, 100 )      
+	attribute( column 5, "Type" ) 
+	width( column 5, 150 )
 	insert column 5
-	attribute( column 5, "Correlation" )
-	width( column 5, 50 )    
-	insert column 6         
-	attribute( column 6, "Name_" )
-	width( column 6, 100 )               
+	attribute( column 6, "Contribution Type" )
+	width( column 6, 100 )      
+	insert column 6
+	attribute( column 7, "Correlation" )
+	width( column 7, 50 )    
+	insert column 7         
+	attribute( column 8, "Name_" )
+	width( column 8, 100 )               
 	refresh current
 	save view( "Full Intentional Element Links View" )
 	
 	refresh current
 	save view( "Contribution View" )
 	
-	delete column 4
-	delete column 4
+	delete column 6
+	delete column 6
 	refresh current
 	save view( "Decomposition/Dependency View" )
 
 
 	createCommonViews()
-	setDefaultViewForModule( current, "Contribution View" )          
-	debug("created intentional element views\n", 3)
+	setDefaultViewForModule( current, "Full Intentional Element Links View" )          
+	debug("created intentional element associations views\n", 3)
 	return true
 }
 
@@ -376,25 +383,13 @@ bool createGrlDiagramViews() {
 	width( column 15, 50 )        
 	insert column 16
 	attribute( column 16, "Fy" )
-	width( column 16, 50 )   
+	width( column 16, 50 )            	     
 	insert column 17
-	attribute( column 17, "Source ID" )
-	width( column 17, 50 )        
-	insert column 18
-	attribute( column 18, "Destination ID" )
-	width( column 18, 50 )        
-	insert column 19
-	attribute( column 19, "Link ID" )
-	width( column 19, 50 )         	     
-	insert column 20
-	attribute( column 20, "Name_" )
-	width( column 20, 100 )        
+	attribute( column 17, "Name_" )
+	width( column 17, 100 )        
 	refresh current
 	save view( "Full GRL Diagram View" )
 
-	delete column 17
-	delete column 17
-	delete column 17
 	delete column 5
 	delete column 5
 	delete column 5
@@ -458,20 +453,6 @@ bool createGrlDiagramViews() {
 	width( column 6, 50 )        
 	refresh current
 	save view( "GRL Diagram View" )
-
-	load view( "Standard view" )
-	delete column 0
-	width( column 0, 150 )
-	insert column 1
-	attribute( column 1, "Source ID" )
-	width( column 1, 50 )        
-	insert column 2
-	attribute( column 2, "Destination ID" )
-	width( column 2, 50 )        
-	insert column 3
-	attribute( column 3, "Link ID" )
-	width( column 3, 50 )   
-	save view( "Link Ref View" )
 	
 	createCommonViews()
 	setDefaultViewForModule( current, "GRL Diagram View" )        
@@ -677,5 +658,44 @@ bool createScenarioViews() {
 	createCommonViews()
 	setDefaultViewForModule( current, "Scenario View" )
 	debug("created scenario views\n", 3)
+	return true
+}
+
+/*************************************************************************************** 
+// Author Jean-François Roy, July 2006
+// - creates views for strategies
+// - always returns true
+// - assumptions for this function
+//	- strategy module is the current module and is ready to be used
+*/
+bool createStrategyViews() {
+	Filter f
+
+	load view( "Standard view" )
+	delete( column 0 )
+	width( column 0, 150 )
+	insert column 0
+	attribute( column 0, "ID" )
+	width( column 0, 50 )
+	insert column 2
+	attribute( column 2, "Description_" )
+	width( column 2, 100 )
+	insert column 3
+	attribute( column 3, "Author" ) 
+	width( column 3, 100 )
+	insert column 4
+	attribute( column 4, "Name_" )
+	width( column 4, 100 )
+	refresh current
+	save view( "Strategy View" )
+	
+	delete column 2
+	delete column 2
+	refresh current
+	save view( "Evaluation View" )
+	
+	createCommonViews()
+	setDefaultViewForModule( current, "Evaluation View" )          
+	debug("created strategies views\n", 3)
 	return true
 }

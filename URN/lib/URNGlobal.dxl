@@ -44,7 +44,8 @@ const string fileNameScenarios = "Scenarios"
 const string fileNameGrlDiagrams = "GRL Diagrams"
 const string fileNameActors = "Actors"
 const string fileNameIntentionalElements = "Intentional Elements"
-const string fileNameIntentionalElementLinks = "Intentional Element Links"
+const string fileNameIntentionalElementAssociations = "Intentional Element Associations"
+const string fileNameStrategy = "Strategies"
 const string fileNameLinkDevComp = "Hosts"
 const string fileNameLinkDevResp = "Requests"
 const string fileNameLinkRefDef = "References"
@@ -52,6 +53,7 @@ const string fileNameLinkMapElem = "Refines"
 const string fileNameLinkMapScen = "Traced By"
 const string fileNameLinkMapComp = "Bound To"
 const string fileNameLinkBeliefElem = "Rationales"
+const string fileNameLinkUrnLink = "Urn Links"
 const string attributeExternalLink = "Generated"
 const string attributeExternalModule = "Common"
 
@@ -100,7 +102,8 @@ Module scenarioModule
 Module grlDiagramModule
 Module actorModule
 Module intentionalElementModule
-Module intentionalElementLinksModule
+Module intentionalElementAssociationsModule
+Module strategyModule
 
 // all UCM link modules
 Module hostsLinkModule
@@ -109,7 +112,7 @@ Module referencesLinkModule
 Module refinesLinkModule
 Module boundtoLinkModule
 Module tracedByLinkModule
-Module rationaleLinkModule
+Module linkRefLinkModule
 // all external modules
 Module externalModule
 Module externalLinkModule

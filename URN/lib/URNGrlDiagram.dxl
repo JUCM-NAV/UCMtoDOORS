@@ -245,30 +245,3 @@ bool belief( string id, int fx, int fy, string enclosingActor, string linkElemen
 	debug("imported belief " foundObject."ID" "\n", 3)
 	return true
 }
-
-/*************************************************************************************** 
-// Author Jean-François Roy, July 2006
-// - imports link ref (delete all the previously created link ref and recreate them)
-// - always returns true
-// - assumptions for this function
-//	- the dxl file is well-formed (if M is the last executed diagram and E 
-//	  is the currently executed diagram element, then E is a diagram element of M)
-//	- the ElementLink and IntentionalElementRef have been created 
-*/
-bool linkref( string sourceID, string destinationID, string linkID) {
-	Object foundObject = null
-
-	// cannot assume that the current module is grlDiagramModule, needs to be set explicitly
-	current = grlDiagramModule
-	foundObject = create last below currentDiagramObject
-	foundObject."Object Heading" = currentDiagramObject."Name_" ".LinkRef"
-	foundObject."ID" = linkID "-" sourceID "-" destinationID
-	
-	foundObject."Name_" = "LinkRef" linkID
-	foundObject."Source ID" = sourceID
-	foundObject."Destination ID" = destinationID
-	foundObject."Link ID" = linkID
-
-	debug("imported link ref " foundObject."ID" "\n", 3)
-	return true
-}

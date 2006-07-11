@@ -1,0 +1,99 @@
+/*************************************************************************************** 
+// Author Jean-Francois Roy, July 2006
+*/
+// global variables, used only within this file
+Object currentStrategyObject
+/*************************************************************************************** 
+// Author Jean-Francois Roy, July 2006
+// - imports strategy (updates object if it exists otherwise creates new one)
+// - always returns true
+*/
+bool strategy( string elementID, string elementName, string theDescription, string author ) {
+	Object foundObject
+
+	foundObject = findObject( elementID, strategyModule )
+	if ( null foundObject ) {
+		foundObject = createNewObject( strategyModule )
+		foundObject."ID" = elementID
+		foundObject."Object Heading" = elementName
+		foundObject."Name_" = elementName
+		foundObject."Description_" = theDescription           
+		foundObject."Author" = author            
+		foundObject."New" = true
+		foundObject."Deleted" = false
+	}
+	else {
+		if( foundObject."Name_" "" != elementName ) {
+			foundObject."Object Heading" = elementName
+			foundObject."Name_" = elementName    
+		}
+		if( foundObject."Author" "" != author )
+			foundObject."Author" = author   
+		if( foundObject."Description_" "" != theDescription )
+			foundObject."Description_" = theDescription    
+		foundObject."Deleted" = false
+	}
+	currentStrategyObject = foundObject
+	debug("imported strategy " foundObject."ID" "\n",3)
+	return true
+}
+
+/*************************************************************************************** 
+// Author Jean-François Roy, July 2006
+// - imports evaluation for the current scenario
+// - always returns true
+// - assumptions for this function
+//	- the dxl file is well-formed (if S is the last executed strategy and E 
+//	  is the currently executed evaluation, then E is an evaluation of M)
+*/
+bool evaluation( string name, string value ) {
+	AttrDef ad = find(strategyModule, name)
+	
+	if ( null ad) {
+		create object type "String" (default "") attribute name
+
+		load view "Evaluation View" 
+		insert column 2
+		attribute( column 2, name) 
+		width( column 2, 50 )
+		refresh current
+		save view( "Evaluation View" )
+
+		currentStrategyObject.name = value
+	} else {
+		currentStrategyObject.name = value
+	}
+	debug("imported evaluation \n", 3)
+	return true
+}
+
+/*************************************************************************************** 
+// Author Jean-François Roy, July 2006
+// - imports user defined evaluation for the current scenario
+// - always returns true
+// - assumptions for this function
+//	- the dxl file is well-formed (if S is the last executed strategy and E 
+//	  is the currently executed evaluation, then E is an evaluation of M)
+*/
+bool defined( string name, string value ) {
+	AttrDef ad = find(strategyModule, name)
+	
+	if ( null ad) {
+		create object type "String" (default "") attribute name
+		
+		load view "Evaluation View" 
+		insert column 2
+		attribute( column 2, name) 
+		width( column 2, 50 )
+		refresh current
+		save view( "Evaluation View" )
+
+		currentStrategyObject.name = "*" value
+
+
+	} else {
+		currentStrategyObject.name = "*" value
+	}
+	debug("imported defined evaluation \n", 3)
+	return true
+}

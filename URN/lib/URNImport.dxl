@@ -17,7 +17,7 @@
 //	- opens all formal modules for editing (sets global variables deviceModule, componentModule, 
 //	  responsibilityModule, mapModule, scenarioModule)
 //	- creates all link modules (sets global variables hostsLinkModule, requestsLinkModule, 
-//	  referencesLinkModule, refinesLinkModule, boundtoLinkModule, tracedByLinkModule, rationaleLinkModule)
+//	  referencesLinkModule, refinesLinkModule, boundtoLinkModule, tracedByLinkModule, rationaleLinkModule, urnLinkModule)
 // - halts if an error occurs or the user chooses "Quit", otherwise returns true
 */
 bool beginImport( string ucmDesignName ) {
@@ -151,10 +151,13 @@ bool endImport() {
 	if( countDeletedNotRemoved > 0 )
 		feedback = feedback "in " fileNameIntentionalElements ": " countDeletedNotRemoved " object(s)\n"
 	
-	removeDeletedObjects( intentionalElementLinksModule )
+	removeDeletedObjects( intentionalElementAssociationsModule )
 	if( countDeletedNotRemoved > 0 )
-		feedback = feedback "in " fileNameIntentionalElementLinks ": " countDeletedNotRemoved " object(s)\n"
+		feedback = feedback "in " fileNameIntentionalElementAssociations ": " countDeletedNotRemoved " object(s)\n"
 
+	removeDeletedObjects( strategyModule )
+	if( countDeletedNotRemoved > 0 )
+		feedback = feedback "in " fileNameStrategy ": " countDeletedNotRemoved " object(s)\n"
 
 	if( feedback != "One or more objects could not be removed because of external links.\n\n" )
 		messageBox( feedback, buttons, msgWarning)
@@ -165,6 +168,7 @@ bool endImport() {
 	createGrlDiagramLinks()
 	createScenarioLinks()
 	createDeviceLinks()
+	createGrlElementLinks()
 	debug("created links\n", 3)
 
 	// save and close all formal and link modules (external and UCM)

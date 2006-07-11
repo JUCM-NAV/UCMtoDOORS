@@ -132,8 +132,14 @@ bool checkDeletedUCMModules() {
 		}
 	}
 	
-	if ( exists module fileNameIntentionalElementLinks ) {
-		if (isDeleted item( fileNameIntentionalElementLinks )){
+	if ( exists module fileNameIntentionalElementAssociations ) {
+		if (isDeleted item( fileNameIntentionalElementAssociations )){
+			checkOK = false
+		}
+	}
+	
+	if ( exists module fileNameStrategy ) {
+		if (isDeleted item( fileNameStrategy )){
 			checkOK = false
 		}
 	}
@@ -178,6 +184,9 @@ bool removeUCMLinkModules() {
 						removeOK = removeModule( fileNameLinkMapScen )
 						if (removeOK){
 							removeOK = removeModule( fileNameLinkBeliefElem)
+							if (removeOK){
+								removeOK = removeModule( fileNameLinkUrnLink )
+							}
 						}
 					}
 				}
@@ -214,6 +223,7 @@ bool checkCreateUCMModule( string theName ) {
 	else {
 		// last parameter needs to be true because otherwise views cannot be created
 		currentModule = create( theName, theName, "0", 1, true)
+
 		current = currentModule
 		if( theName == fileNameDevices ) {
 			create object type "String" (default "No content") attribute "ID" 
@@ -278,7 +288,7 @@ bool checkCreateUCMModule( string theName ) {
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
 			createIntentionalElementViews()
 		}
-		if( theName == fileNameIntentionalElementLinks ) {
+		if( theName == fileNameIntentionalElementAssociations ) {
 			create object type "String" (default "No content") attribute "ID" 
 			create object type "String" (default "No content") attribute "Name_"  
 			create object type "String" (default "") attribute "Description_"    
@@ -295,9 +305,21 @@ bool checkCreateUCMModule( string theName ) {
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links" 
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "New" 
 			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
-			createIntentionalElementLinksViews()
+			createIntentionalElementAssociationsViews()
 		}
-		
+		if( theName == fileNameStrategy ) {
+			create object type "String" (default "No content") attribute "ID" 
+			create object type "String" (default "No content") attribute "Name_"          
+			create object type "String" (default "") attribute "Description_"  
+			create object type "String" (default "") attribute "Author"   
+     
+			// internal attributes
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
+			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "New" 
+			create object type "Boolean" date false history false changeBars false (default "false") attribute "Deleted" 
+			createStrategyViews()
+		}		
 		if( theName == fileNameMaps ) {
 			// for all
 			create object type "String" (default "No content") attribute "ID" 
@@ -358,7 +380,6 @@ bool checkCreateUCMModule( string theName ) {
 			// only used for LinkRef
 			create object type "String" (default "") attribute "Source ID"
 			create object type "String" (default "") attribute "Destination ID"
-			create object type "String" (default "") attribute "Link ID"
 			// internal attributes
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links"
@@ -448,7 +469,12 @@ bool checkCreateUCMModules() {
 		}
 	}
 	if( createOK ) {
-		if (!checkCreateUCMModule( fileNameIntentionalElementLinks )){
+		if (!checkCreateUCMModule( fileNameIntentionalElementAssociations )){
+			createOK = false
+		}
+	}
+	if( createOK ) {
+		if (!checkCreateUCMModule( fileNameStrategy )){
 			createOK = false
 		}
 	}
@@ -464,7 +490,7 @@ bool checkCreateUCMModules() {
 */
 bool checkCreateUCMLinkModules() {
 	Module currentModule
-	bool hostsOK = false, requestsOK = false, referencesOK = false, refinesOK = false, boundToOK = false, tracedByOK = false, rationaleByOK = false
+	bool hostsOK = false, requestsOK = false, referencesOK = false, refinesOK = false, boundToOK = false, tracedByOK = false, rationaleByOK = false, urnLinkByOK = false
 
 	if ( !( exists module fileNameLinkDevComp ) ) {
 		create( fileNameLinkDevComp, "devices host components", manyToMany, false )
@@ -476,7 +502,7 @@ bool checkCreateUCMLinkModules() {
 	}
 	requestsLinkModule = edit( fileNameLinkDevResp, false )
 	if ( !( exists module fileNameLinkRefDef ) ) {
-		create( fileNameLinkRefDef, "responsibilities and components on maps reference responsibility and component definitions", manyToMany, false )
+		create( fileNameLinkRefDef, "responsibilities and components on maps reference responsibility and component definitions, intentional element, actor and links references on grl diagram reference intentional element, actor or intentional element associations", manyToMany, false )
 	}
 	referencesLinkModule = edit( fileNameLinkRefDef, false )
 	if ( !( exists module fileNameLinkMapElem ) ) {
@@ -495,6 +521,11 @@ bool checkCreateUCMLinkModules() {
 		create( fileNameLinkBeliefElem, "beliefs are rationales of intentional element references", manyToMany, false )
 	}
 	rationaleLinkModule = edit( fileNameLinkBeliefElem, false )
+	if ( !( exists module fileNameLinkUrnLink) ){
+		create( fileNameLinkUrnLink, "links between urn elements", manyToMany, false )
+	}
+	urnLinkModule = edit( fileNameLinkUrnLink, false )
+		
 	for currentModule in current Folder do {
 		if( isEdit( currentModule ) ) {
 			if( currentModule."Name" "" == fileNameLinkDevComp )
@@ -511,9 +542,11 @@ bool checkCreateUCMLinkModules() {
 				tracedByOK = true
 			if( currentModule."Name" "" == fileNameLinkBeliefElem )
 				rationaleByOK = true
+			if( currentModule."Name" "" == fileNameLinkUrnLink )
+				urnLinkByOK = true
 		}
 	}
-	return ( hostsOK && requestsOK && referencesOK && refinesOK && boundToOK && tracedByOK && rationaleByOK)
+	return ( hostsOK && requestsOK && referencesOK && refinesOK && boundToOK && tracedByOK && rationaleByOK && urnLinkByOK)
 }
 
 /*************************************************************************************** 
@@ -528,7 +561,7 @@ bool openUCMModules() {
 	bool preparationOKDevices = false, preparationOKComponents = false
 	bool preparationOKResponsibilities = false, preparationOKMaps = false, preparationOKScenarios = false
 	bool preparationOKGrlDiagrams = false, preparationOKActors = false, preparationOKIntentionalElements = false
-	bool preparationOKElementLinks = false
+	bool preparationOKElementLinks = false, preparationOKStrategy = false
 	
 	deviceModule = edit( fileNameDevices, false )
 	componentModule = edit( fileNameComponents, false )
@@ -538,7 +571,8 @@ bool openUCMModules() {
 	grlDiagramModule = edit (fileNameGrlDiagrams, false)
 	actorModule = edit (fileNameActors, false)
 	intentionalElementModule = edit(fileNameIntentionalElements, false)
-	intentionalElementLinksModule = edit(fileNameIntentionalElementLinks, false)
+	intentionalElementAssociationsModule = edit(fileNameIntentionalElementAssociations, false)
+	strategyModule = edit(fileNameStrategy, true)
 	
 	for currentModule in UCMFolder do {
 		if( isEdit( currentModule ) ) {
@@ -558,13 +592,16 @@ bool openUCMModules() {
 				preparationOKActors = true
 			if (currentModule."Name" "" == fileNameIntentionalElements)
 				preparationOKIntentionalElements = true
-			if (currentModule."Name" "" == fileNameIntentionalElementLinks)
+			if (currentModule."Name" "" == fileNameIntentionalElementAssociations)
 				preparationOKElementLinks = true
+			if (currentModule."Name" "" == fileNameStrategy)
+				preparationOKStrategy = true
 		}
 	}
 	return ( preparationOKDevices && preparationOKComponents && preparationOKResponsibilities && 
-				preparationOKMaps && preparationOKScenarios && preparationOKGrlDiagrams && preparationOKActors && preparationOKIntentionalElements &&
-				preparationOKElementLinks)
+				preparationOKMaps && preparationOKScenarios && preparationOKGrlDiagrams && 
+				preparationOKActors && preparationOKIntentionalElements &&
+				preparationOKElementLinks && preparationOKStrategy)
 }
 
 /*************************************************************************************** 
@@ -581,7 +618,7 @@ bool checkStartedFromUCMModule( string programName ) {
 		debug(name( current Module ) "\n", 2)
 		n = name( current Module )
 		if( ( n != fileNameDevices ) && ( n != fileNameComponents ) && ( n != fileNameResponsibilities ) && ( n != fileNameMaps ) && ( n != fileNameScenarios ) &&
-				(n != fileNameGrlDiagrams) && (n != fileNameActors) && (n != fileNameIntentionalElements) && (n != fileNameIntentionalElementLinks) ) {
+				(n != fileNameGrlDiagrams) && (n != fileNameActors) && (n != fileNameIntentionalElements) && (n != fileNameIntentionalElementAssociations) && (n != fileNameStrategy)) {
 			messageBox( programName " must be started from a URN module.\nPlease select a URN module and start " programName " again.\n", buttons, msgError )
 			halt
 		}

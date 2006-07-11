@@ -8,14 +8,14 @@
 // -(updates object if it exists otherwise creates new one)
 // - always returns true
 // - assumptions for this function
-// - intentionalElementLinksModule exists and is ready to be used
+// - intentionalElementAssociationsModule exists and is ready to be used
 */
 bool elementlink( string elementID, string elementName, string elementType, string theDescription, string sourceID, string destinationID ) {
 	Object foundObject
 
-	foundObject = findObject( elementID, intentionalElementLinksModule )
+	foundObject = findObject( elementID, intentionalElementAssociationsModule )
 	if ( null foundObject ) {
-		foundObject = createNewObject( intentionalElementLinksModule )
+		foundObject = createNewObject( intentionalElementAssociationsModule )
 		foundObject."ID" = elementID
 		foundObject."Object Heading" = elementName
 		foundObject."Name_" = elementName
@@ -51,14 +51,14 @@ bool elementlink( string elementID, string elementName, string elementType, stri
 // -(updates object if it exists otherwise creates new one)
 // - always returns true
 // - assumptions for this function
-// - intentionalElementLinksModule exists and is ready to be used
+// - intentionalElementAssociationsModule exists and is ready to be used
 */
 bool contribution( string elementID, string elementName, string elementType, string contributionType, string correlation, string theDescription, string sourceID, string destinationID ) {
 	Object foundObject
 
-	foundObject = findObject( elementID, intentionalElementLinksModule )
+	foundObject = findObject( elementID, intentionalElementAssociationsModule )
 	if ( null foundObject ) {
-		foundObject = createNewObject( intentionalElementLinksModule )
+		foundObject = createNewObject( intentionalElementAssociationsModule )
 		foundObject."ID" = elementID
 		foundObject."Object Heading" = elementName
 		foundObject."Name_" = elementName

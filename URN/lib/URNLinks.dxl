@@ -124,6 +124,39 @@ bool createGrlDiagramLinks() {
 }
 
 /*************************************************************************************** 
+// Author Jean-François Roy
+// - creates links between intentional elements
+// - always returns true
+// - assumptions for this function
+//	- intentionalElementModule, intentionalElementAssociationsModule exist and are ready to be used
+//	- fileNameLinkMapElem exist and are ready to be used
+*/
+bool createGrlElementLinks() {
+	Object currentObject, targetObject
+	string s, p
+	int i, j
+	bool b
+
+	for currentObject in intentionalElementAssociationsModule do {
+		// skip over deleted objects which could not be removed because of links
+		b = currentObject."Deleted"
+		if( !b ) {
+			// create link between source and current link
+			targetObject = findObject( currentObject."source ID" "", intentionalElementModule )
+			if ( !( null targetObject ) )
+				targetObject->fileNameLinkMapElem->currentObject
+			
+			//create link between destination and current link
+			targetObject = findObject( currentObject."destination ID" "", intentionalElementModule )
+			if ( !( null targetObject ) )
+				currentObject->fileNameLinkMapElem->targetObject		
+		}
+	}
+	debug("created intentional element associations\n", 3)
+	return true
+}
+
+/*************************************************************************************** 
 // Author Gunter Mussbacher, May-Jun2005
 // - creates links within the maps module and from the maps module to the definition modules
 // - always returns true
