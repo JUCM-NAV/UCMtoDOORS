@@ -40,6 +40,7 @@ bool strategy( string elementID, string elementName, string theDescription, stri
 
 /*************************************************************************************** 
 // Author Jean-François Roy, July 2006
+// Author Gunter Mussbacher, September 2006
 // - imports evaluation for the current scenario
 // - always returns true
 // - assumptions for this function
@@ -48,27 +49,27 @@ bool strategy( string elementID, string elementName, string theDescription, stri
 */
 bool evaluation( string name, string value ) {
 	AttrDef ad = find(strategyModule, name)
-	
-	if ( null ad) {
+	if ( null ad ) {
+		// cannot assume that the current module is strategyModule, needs to be set explicitly
+		current = strategyModule
+
 		create object type "String" (default "") attribute name
 
-		load view "Evaluation View" 
+		load view( "Evaluation View" )
 		insert column 2
 		attribute( column 2, name) 
 		width( column 2, 50 )
 		refresh current
 		save view( "Evaluation View" )
-
-		currentStrategyObject.name = value
-	} else {
-		currentStrategyObject.name = value
-	}
-	debug("imported evaluation \n", 3)
+	} 
+	currentStrategyObject.name = value
+	debug("imported evaluation " name "\n", 3)
 	return true
 }
 
 /*************************************************************************************** 
 // Author Jean-François Roy, July 2006
+// Author Gunter Mussbacher, September 2006
 // - imports user defined evaluation for the current scenario
 // - always returns true
 // - assumptions for this function
@@ -77,23 +78,20 @@ bool evaluation( string name, string value ) {
 */
 bool defined( string name, string value ) {
 	AttrDef ad = find(strategyModule, name)
-	
-	if ( null ad) {
+	if ( null ad ) {
+		// cannot assume that the current module is strategyModule, needs to be set explicitly
+		current = strategyModule
+
 		create object type "String" (default "") attribute name
 		
-		load view "Evaluation View" 
+		load view( "Evaluation View" )
 		insert column 2
 		attribute( column 2, name) 
 		width( column 2, 50 )
 		refresh current
 		save view( "Evaluation View" )
-
-		currentStrategyObject.name = "*" value
-
-
-	} else {
-		currentStrategyObject.name = "*" value
-	}
-	debug("imported defined evaluation \n", 3)
+	} 
+	currentStrategyObject.name = "*" value
+	debug("imported defined evaluation " name "\n", 3)
 	return true
 }
