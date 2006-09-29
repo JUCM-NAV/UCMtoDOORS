@@ -80,6 +80,7 @@ bool beginImport( string ucmDesignName ) {
 		halt
 	}
 	debug("removed all internal link modules\n", 3)
+	
 
 	// make sure all required modules exist, the objects of an existing module are set to deleted and old,
 	// generated external links are removed
@@ -88,7 +89,7 @@ bool beginImport( string ucmDesignName ) {
 		halt
 	}
 	debug("created all modules\n",3)
-
+	
 	// open all modules for editing
 	if( !( openUCMModules() ) ) {
 		messageBox( "One or more URN modules could not be opened for editing.\nImport of URN module cannot proceed.\n", buttons3, msgError )
@@ -96,6 +97,9 @@ bool beginImport( string ucmDesignName ) {
 	}
 	debug("opened all modules for editing\n", 3)
 
+	checkDeleteAttributeModule()
+	debug("attributes from Strategy module removed\n", 3)
+		
 	// create all link modules
 	if( !( checkCreateUCMLinkModules() ) ) {
 		messageBox( "One or more URN link modules could not be created.\nImport of URN module cannot proceed.\n", buttons3, msgError )

@@ -12,8 +12,10 @@ bool strategy( string elementID, string elementName, string theDescription, stri
 	Object foundObject
 
 	foundObject = findObject( elementID, strategyModule )
+	
 	if ( null foundObject ) {
 		foundObject = createNewObject( strategyModule )
+		
 		foundObject."ID" = elementID
 		foundObject."Object Heading" = elementName
 		foundObject."Name_" = elementName
@@ -53,7 +55,7 @@ bool evaluation( string name, string value ) {
 		// cannot assume that the current module is strategyModule, needs to be set explicitly
 		current = strategyModule
 
-		create object type "String" (default "") attribute name
+		create object type "Evaluation" (default "") attribute name
 
 		load view( "Evaluation View" )
 		insert column 2
@@ -82,7 +84,7 @@ bool defined( string name, string value ) {
 		// cannot assume that the current module is strategyModule, needs to be set explicitly
 		current = strategyModule
 
-		create object type "String" (default "") attribute name
+		create object type "Evaluation" (default "") attribute name
 		
 		load view( "Evaluation View" )
 		insert column 2

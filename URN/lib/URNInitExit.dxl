@@ -84,6 +84,16 @@ bool saveCloseAllModules( Folder theFolder ) {
 }
 
 /*************************************************************************************** 
+// Author Jean-Francois Roy - September 2006
+// - Removed attributes from necessary modules
+*/
+void checkDeleteAttributeModule()
+{
+	if ( exists module fileNameStrategy ) {
+		removeAllAttributes( strategyModule )
+	}
+}
+/*************************************************************************************** 
 // Author Gunter Mussbacher, May-Jun2005
 // - checks whether one of the UCM modules has been deleted
 // - returns true if modules are not deleted, false if one of the modules is deleted
@@ -312,7 +322,10 @@ bool checkCreateUCMModule( string theName ) {
 			create object type "String" (default "No content") attribute "Name_"          
 			create object type "String" (default "") attribute "Description_"  
 			create object type "String" (default "") attribute "Author"   
-     
+     		
+     		string tmp = ""
+     		AttrType at = create("Evaluation", attrString, tmp ) 
+		
 			// internal attributes
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect Out Links" 
