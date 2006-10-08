@@ -96,10 +96,7 @@ bool beginImport( string ucmDesignName ) {
 		halt
 	}
 	debug("opened all modules for editing\n", 3)
-
-	checkDeleteAttributeModule()
-	debug("attributes from Strategy module removed\n", 3)
-		
+	
 	// create all link modules
 	if( !( checkCreateUCMLinkModules() ) ) {
 		messageBox( "One or more URN link modules could not be created.\nImport of URN module cannot proceed.\n", buttons3, msgError )
@@ -165,7 +162,11 @@ bool endImport() {
 
 	if( feedback != "One or more objects could not be removed because of external links.\n\n" )
 		messageBox( feedback, buttons, msgWarning)
+	
+	checkStrategiesAttributes()
 	debug("removed all deleted objects\n", 2)
+	
+
 
 	// create links in all link modules
 	createMapLinks()

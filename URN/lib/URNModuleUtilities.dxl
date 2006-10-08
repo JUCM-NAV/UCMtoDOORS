@@ -166,23 +166,3 @@ bool removeDeletedObjects( Module theModule ) {
 	purgeObjects_ theModule
 	return true
 }
-
-/*************************************************************************************** 
-// Author Jean-Francois Roy, September 2006
-// - removes all attributes in a module
-// - returns true if attributes were removed
-*/
-void removeAllAttributes( Module theModule ) {	
-	AttrDef ad 
-
-	for ad in theModule do{
-	    if (ad.typeName == "Evaluation")
-	    {
-		    debug("Removing " ad.name, 3)
-	    	delete(ad);
-	    } else
-	    {
-	    	debug("Could not removed " ad.name, 3)
-	    }
-	} 
-}

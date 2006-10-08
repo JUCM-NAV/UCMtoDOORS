@@ -84,15 +84,39 @@ bool saveCloseAllModules( Folder theFolder ) {
 }
 
 /*************************************************************************************** 
-// Author Jean-Francois Roy - September 2006
-// - Removed attributes from necessary modules
+// Author Jean-Francois Roy, Sept 2006
+// - Remove all unused attributes from strategy module
+// - Attribute should have been create with Evaluation type
 */
-void checkDeleteAttributeModule()
-{
-	if ( exists module fileNameStrategy ) {
-		removeAllAttributes( strategyModule )
-	}
+void checkStrategiesAttributes() {
+	Object element
+	AttrDef ad 
+	AttrType typ 
+    
+	bool markedDeleted
+
+	for ad in strategyModule do{
+		element = null
+		//typ = ad.type
+		//if (typ.name == "Integer" && ad.defval) {
+		//string sType = stringOf(ad.type) 
+		if(ad.typeName == "Evaluation")
+		{
+		    element = findObject( ad.name, intentionalElementModule )
+			
+			if (null element)
+			{
+				element = findObject( ad.name, actorModule )
+				if (null element)
+				{
+					debug("Removing " ad.name "\n", 3)
+	   				delete(ad)
+	    		}
+	    	} 
+		}
+	} 	
 }
+
 /*************************************************************************************** 
 // Author Gunter Mussbacher, May-Jun2005
 // - checks whether one of the UCM modules has been deleted
@@ -318,13 +342,14 @@ bool checkCreateUCMModule( string theName ) {
 			createIntentionalElementAssociationsViews()
 		}
 		if( theName == fileNameStrategy ) {
+			//Create an attribute type for distinguishing evaluation attributes
+     		string tmp = ""
+     		AttrType at = create("Evaluation", attrString, tmp ) 
+
 			create object type "String" (default "No content") attribute "ID" 
 			create object type "String" (default "No content") attribute "Name_"          
 			create object type "String" (default "") attribute "Description_"  
 			create object type "String" (default "") attribute "Author"   
-     		
-     		string tmp = ""
-     		AttrType at = create("Evaluation", attrString, tmp ) 
 		
 			// internal attributes
 			create object type "Text" date false history false changeBars false (default "No content") attribute "Suspect In Links" 
