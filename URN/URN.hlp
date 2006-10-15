@@ -1,10 +1,15 @@
-User-defined DXL library
-This library is provided to allow you to
-add your own DXL programs to the library.
+This DXL library supports the creation 
+and update of URN models in DOORS. 
 
-For example, if you have your own standard
-document formats which you wish to parse, put
-a DXL parsing program in this library.
+DXL files can be exported bu UCMNav and
+jUCMNav. Running them requires this 
+library to be installed in the 
+'Program Files\Telelogic\DOORS_8.0\lib\
+dxl\addin' directory. 
 
-See the DOORS DXL Manual for more information
-on defining library functions.
+Two additional features are provided
+(accessible via a DOORS menu):
+
+- Auto Complete Links
+- Report Changes
+
