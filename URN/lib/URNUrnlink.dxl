@@ -4,6 +4,7 @@
 
 /*************************************************************************************** 
 // Author Jean-Francois Roy, July 2006
+// Author Gunter Mussbacher, October 2006
 // - imports urn links (updates object if it exists otherwise creates new one)
 // - always returns true
 // - assumptions for this function
@@ -26,8 +27,8 @@ bool urnlink( string sourceID, string destinationID){
 			destinationObject = findObject( destinationID, componentModule )
 	}
 	if ( (!(null sourceObject)) && (!(null destinationObject)) ) {
-		sourceObject->fileNameLinkUrnLink->destinationObject
-		
+		// links in DOORS should be bottom up - therefore source and destination are reversed
+		destinationObject->fileNameLinkUrnLink->sourceObject
 	}
 	debug("created urn link\n", 3)
 	return true

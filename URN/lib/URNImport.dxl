@@ -108,7 +108,7 @@ bool beginImport( string ucmDesignName ) {
 }
 
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May-Jun2005
+// Author Gunter Mussbacher, May-Jun2005, October 2006
 // - removes all objects marked deleted in all formal modules
 // - creates links in all link modules
 // - saves and closes all formal and link modules
@@ -125,37 +125,48 @@ bool endImport() {
 	removeDeletedObjects( deviceModule )
 	if( countDeletedNotRemoved > 0 )
 		feedback = feedback "in " fileNameDevices ": " countDeletedNotRemoved " object(s)\n"
+
 	countDeletedNotRemoved = 0
 	removeDeletedObjects( componentModule )
 	if( countDeletedNotRemoved > 0 )
 		feedback = feedback "in " fileNameComponents ": " countDeletedNotRemoved " object(s)\n"
+
 	countDeletedNotRemoved = 0	
 	removeDeletedObjects( responsibilityModule )
 	if( countDeletedNotRemoved > 0 )
 		feedback = feedback "in " fileNameResponsibilities ": " countDeletedNotRemoved " object(s)\n"
+
 	countDeletedNotRemoved = 0
 	removeDeletedObjects( mapModule )
 	if( countDeletedNotRemoved > 0 )
 		feedback = feedback "in " fileNameMaps ": " countDeletedNotRemoved " object(s)\n"
+
 	countDeletedNotRemoved = 0
 	removeDeletedObjects( scenarioModule )
 	if( countDeletedNotRemoved > 0 )
 		feedback = feedback "in " fileNameScenarios ": " countDeletedNotRemoved " object(s)\n"
+
 	countDeletedNotRemoved = 0
 	removeDeletedObjects( grlDiagramModule )
 	if( countDeletedNotRemoved > 0 )
 		feedback = feedback "in " fileNameGrlDiagrams ": " countDeletedNotRemoved " object(s)\n"
+
+	countDeletedNotRemoved = 0
 	removeDeletedObjects( actorModule )
 	if( countDeletedNotRemoved > 0 )
 		feedback = feedback "in " fileNameActors ": " countDeletedNotRemoved " object(s)\n"
+
+	countDeletedNotRemoved = 0
 	removeDeletedObjects( intentionalElementModule )
 	if( countDeletedNotRemoved > 0 )
 		feedback = feedback "in " fileNameIntentionalElements ": " countDeletedNotRemoved " object(s)\n"
-	
+
+	countDeletedNotRemoved = 0	
 	removeDeletedObjects( intentionalElementAssociationsModule )
 	if( countDeletedNotRemoved > 0 )
 		feedback = feedback "in " fileNameIntentionalElementAssociations ": " countDeletedNotRemoved " object(s)\n"
 
+	countDeletedNotRemoved = 0
 	removeDeletedObjects( strategyModule )
 	if( countDeletedNotRemoved > 0 )
 		feedback = feedback "in " fileNameStrategy ": " countDeletedNotRemoved " object(s)\n"
@@ -165,8 +176,6 @@ bool endImport() {
 	
 	checkStrategiesAttributes()
 	debug("removed all deleted objects\n", 2)
-	
-
 
 	// create links in all link modules
 	createMapLinks()
