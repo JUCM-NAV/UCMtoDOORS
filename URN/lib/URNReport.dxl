@@ -1,5 +1,5 @@
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May-Aug2005
+// Author Gunter Mussbacher, May-Aug2005, Aug2007
 // - generates a change report for UCM objects with suspect links
 */
 
@@ -68,7 +68,7 @@ bool endGenerateChangeReport() {
 }
 
 /*************************************************************************************** 
-// Author Gunter Mussbacher, May-Aug2005
+// Author Gunter Mussbacher, May-Aug2005, Aug2007
 // - finds the last date the given link was cleared
 // - if linkDirection equals "IN", only the backwards direction of the link is considered
 // - if linkDirection equals "OUT", only the forwards direction of the link is considered
@@ -79,9 +79,9 @@ Date findClearDate( Link myLink, string linkDirection ) {
 	Date d
 
 	if( linkDirection == "IN" )
-		d = myLink."Suspicion Cleared Backwards"
+		d = myLink.S_ATTR_SUSPICION_CLEARED_BACKWARDS
 	if( linkDirection == "OUT" )
-		d = myLink."Suspicion Cleared Forwards"
+		d = myLink.S_ATTR_SUSPICION_CLEARED_FORWARDS
 	if( !( null d ) ) {
 		dateCleared = d
 		debug("date cleared: " dateCleared "\n", 3)
